@@ -36,6 +36,10 @@ public class Analisador
     }
 
     /**
+     * Função pega o valor do input, onde é digitado os comandos, o dividide em duas
+     * palavras e veririca se a primeira palavra é um comando se for cria um
+     * objeto "Comando" com a primeira palavra, caso o contrário cria um comando com
+     * null no lugar da primeria palavra.
      * @return O proximo comando do usuario
      */
     public Comando pegarComando() 
@@ -43,8 +47,6 @@ public class Analisador
         String linha;   // guardara uma linha inteira
         String palavra1 = null;
         String palavra2 = null;
-
-        System.out.print("> ");     // imprime o prompt
 
         linha = entrada.getText();
 

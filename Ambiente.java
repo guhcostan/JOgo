@@ -30,11 +30,11 @@ public class Ambiente {
 	}
 
 	public String getTodasSaidas() {
-		StringBuilder saidasString = new StringBuilder("\n");
+		StringBuilder saidasString = new StringBuilder();
 		for (Entry<String, Ambiente[]> saida : saidas.entrySet()) {
-			saidasString.append(saida.getKey() + ":\n");
+			saidasString.append("  " + saida.getKey() + ":\n");
 			for(Ambiente ambiente : saida.getValue()){
-				saidasString.append("  -");
+				saidasString.append("    -");
 				saidasString.append(ambiente.getNome()).append(" ");
 				saidasString.append("\n");
 			}
