@@ -146,19 +146,25 @@ class Jogo {
 	private void escolherOpcao(Comando comando) {
 		Ambiente proximoAmbiente = null;
 
-		try {
-			Ambiente[] saidas = ambienteAtual.getSaida(direcaoEscolhida);
-			if (saidas.length >= Integer.parseInt(comando.getSegundaPalavra())) {
-				proximoAmbiente = saidas[Integer.parseInt(comando.getSegundaPalavra())];
-			} else {
-				telaPrincipal.adicionaTextoConsole("Opção invalida!");
-			}
-			ambienteAtual = proximoAmbiente;
+        if(direcaoEscolhida != null) {
+            try {
+                Ambiente[] saidas = ambienteAtual.getSaida(direcaoEscolhida);
+                if (saidas.length >= Integer.parseInt(comando.getSegundaPalavra())) {
+                    proximoAmbiente = saidas[Integer.parseInt(comando.getSegundaPalavra()) - 1];
+                    ambienteAtual = proximoAmbiente;
+                } else {
+                    telaPrincipal.adicionaTextoConsole("Opção invalida!\n");
+                }
 
-			ImprimirLocalizacaoAtual();
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		}
+                direcaoEscolhida = null;
+
+                ImprimirLocalizacaoAtual();
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        } else {
+            telaPrincipal.adicionaTextoConsole("Opção invalida!\n");
+        }
 	}
 
 	// Implementacoes dos comandos do usuario
@@ -198,7 +204,7 @@ class Jogo {
                     if (saidas.length > 1) {
                         telaPrincipal.adicionaTextoConsole("Ha mais de uma porta, escolha uma, digite 'opcao' e o numero da opcao!");
                         for (int x = 0; x < saidas.length; x++)
-                            telaPrincipal.adicionaTextoConsole(x + " - " + saidas[x].getNome());
+                            telaPrincipal.adicionaTextoConsole((x + 1) + " - " + saidas[x].getNome());
 							direcaoEscolhida = direcao;
                     } else if (saidas.length == 1) {
                         proximoAmbiente = saidas[0];
