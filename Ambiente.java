@@ -1,5 +1,4 @@
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 
 /**
@@ -12,84 +11,79 @@ import java.util.Map.Entry;
  * aos outros ambientes atraves de saidas. As saidas sao nomeadas como norte,
  * sul, leste e oeste. Para cada direcao, o ambiente guarda uma referencia para
  * o ambiente vizinho, ou null se nao ha saida naquela direcao.
- * 
+ *
  * @author Michael Kölling and David J. Barnes (traduzido por Julio Cesar Alves)
  * @version 2011.07.31 (2016.02.01)
  */
 public class Ambiente {
-	public String nome;
-	private boolean temTesouro = false;
-	private HashMap<String, Ambiente[]> saidas = new HashMap<>();
+    private String nome;
+    private boolean temTesouro = false;
+    private HashMap<String, Ambiente[]> saidas = new HashMap<>();
 
-	public Ambiente[] getSaida(String direcao) {
-		return this.saidas.get(direcao);
-	}
-	
-	public void setTesouro(){
-		this.temTesouro = true;
-	}
+    /**
+     * Cria um ambiente com a "descricao" passada. Inicialmente, ele nao tem
+     * saidas. "descricao" eh algo como "uma cozinha" ou " Create a room
+     * described "description". Initially, it has no exits. "description" is
+     * something like "a kitchen" or "um jardim aberto".
+     *
+     * @param descricao A descricao do ambiente.
+     */
+    Ambiente(String nome) {
+        this.nome = nome;
+    }
 
-	public String getTodasSaidas() {
-		StringBuilder saidasString = new StringBuilder();
-		for (Entry<String, Ambiente[]> saida : saidas.entrySet()) {
-			saidasString.append("  " + saida.getKey() + ":\n");
-			for(Ambiente ambiente : saida.getValue()){
-				saidasString.append("    -");
-				saidasString.append(ambiente.getNome()).append(" ");
-				saidasString.append("\n");
-			}
-		}
-		return saidasString.toString();
-	}
+    Ambiente[] getSaida(String direcao) {
+        return this.saidas.get(direcao);
+    }
 
-	/**
-	 * Cria um ambiente com a "descricao" passada. Inicialmente, ele nao tem
-	 * saidas. "descricao" eh algo como "uma cozinha" ou " Create a room
-	 * described "description". Initially, it has no exits. "description" is
-	 * something like "a kitchen" or "um jardim aberto".
-	 * 
-	 * @param descricao
-	 *            A descricao do ambiente.
-	 */
-	public Ambiente(String nome) {
-		this.nome = nome;
-	}
+    void setTesouro() {
+        this.temTesouro = true;
+    }
 
-	/**
-	 * Define as saidas do ambiente. Cada direcao ou leva a um outro ambiente ou
-	 * eh null (nenhuma saida para la).
-	 * 
-	 * @param norte
-	 *            A saida norte.
-	 * @param leste
-	 *            A saida leste.
-	 * @param sul
-	 *            A saida sul.
-	 * @param oeste
-	 *            A saida oeste.
-	 */
-	public void ajustarSaidas(Ambiente[] norte, Ambiente[] leste,
-			Ambiente[] sul, Ambiente[] oeste) {
-		if (norte != null)
-			saidas.put("norte", norte);
-		if (leste != null)
-			saidas.put("leste", leste);
-		if (sul != null)
-			saidas.put("sul", sul);
-		if (oeste != null)
-			saidas.put("oeste", oeste);
-	}
+    String getTodasSaidas() {
+        StringBuilder saidasString = new StringBuilder();
+        for (Entry<String, Ambiente[]> saida : saidas.entrySet()) {
+            saidasString.append("  ").append(saida.getKey()).append(":\n");
+            for (Ambiente ambiente : saida.getValue()) {
+                saidasString.append("    -");
+                saidasString.append(ambiente.getNome()).append(" ");
+                saidasString.append("\n");
+            }
+        }
+        return saidasString.toString();
+    }
 
-	/**
-	 * @return A descricao do ambiente.
-	 */
-	public String getNome() {
-		return nome;
-	}
+    /**
+     * Define as saidas do ambiente. Cada direcao ou leva a um outro ambiente ou
+     * eh null (nenhuma saida para la).
+     *
+     * @param norte A saida norte.
+     * @param leste A saida leste.
+     * @param sul   A saida sul.
+     * @param oeste A saida oeste.
+     */
+    void ajustarSaidas(Ambiente[] norte, Ambiente[] leste,
+                       Ambiente[] sul, Ambiente[] oeste) {
+        if (norte != null)
+            saidas.put("norte", norte);
+        if (leste != null)
+            saidas.put("leste", leste);
+        if (sul != null)
+            saidas.put("sul", sul);
+        if (oeste != null)
+            saidas.put("oeste", oeste);
+    }
 
-	public void adicionarSaida(String direcao, Ambiente ambiente) {
-		Ambiente[] ambientes = saidas.get(direcao);
-		ambientes[ambientes.length] = ambiente;
-		saidas.put(direcao, ambientes);
-	}
+    /**
+     * @return A descricao do ambiente.
+     */
+    String getNome() {
+        return nome;
+    }
+
+    public void adicionarSaida(String direcao, Ambiente ambiente) {
+        Ambiente[] ambientes = saidas.get(direcao);
+        ambientes[ambientes.length] = ambiente;
+        saidas.put(direcao, ambientes);
+    }
 }
