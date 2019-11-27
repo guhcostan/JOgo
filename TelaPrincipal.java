@@ -11,6 +11,7 @@ class TelaPrincipal {
     private Jogo jogo;
     private JFrame janela;
     private JPanel painelEsquerda;
+    private JPanel painelDireita;
     private JPanel painelSul;
     private JScrollPane painelConsole;
     private JTextArea console;
@@ -19,6 +20,7 @@ class TelaPrincipal {
     TelaPrincipal(Jogo j) {
         janela = new JFrame("World of Zuul");
         painelEsquerda = new JPanel();
+        painelDireita = new JPanel();
         painelSul = new JPanel();
         console = new JTextArea();
         painelConsole = new JScrollPane(console);
@@ -34,6 +36,7 @@ class TelaPrincipal {
         });
 
         montarJanela();
+        atualizaTentativas(j.getNTentativas(), j.getNTentativasChaveMestra());
     }
 
     /**
@@ -41,7 +44,7 @@ class TelaPrincipal {
      * e adiciona os campos, imagem, paineis na janela(JFrame)
      */
     private void montarJanela() {
-        janela.setSize(1000, 550);
+        janela.setSize(1000, 560);
         janela.setLayout(new BorderLayout());
 
         painelSul.setLayout(new BoxLayout(painelSul, BoxLayout.Y_AXIS));
@@ -54,9 +57,26 @@ class TelaPrincipal {
         painelSul.add(painelConsole);
         painelSul.add(input);
 
+        painelEsquerda.setLayout(new BoxLayout(painelDireita, BoxLayout.Y_AXIS));
+
+        atualizaDicas();
         janela.add(painelEsquerda, BorderLayout.WEST);
+        janela.add(painelDireita, BorderLayout.EAST);
         janela.add(new ImagePanel(), BorderLayout.CENTER);
         janela.add(painelSul, BorderLayout.SOUTH);
+    }
+
+    private void atualizaDicas() {
+        painelDireita.add(new JLabel("Dicas encontradas:")).setFont(new Font("SansSerif", Font.PLAIN, 10));
+    }
+
+    public void atualizaTentativas(int nTentativas, int nTentativasMestra) {
+        painelEsquerda.removeAll();
+        painelEsquerda.setLayout(new BoxLayout(painelEsquerda, BoxLayout.Y_AXIS));
+        painelEsquerda.add(new JLabel("Número de tentativas restantes:")).setFont(new Font("SansSerif", Font.BOLD, 15));
+        painelEsquerda.add(new JLabel(String.valueOf(nTentativas))).setFont(new Font("SansSerif", Font.PLAIN, 10));
+        painelEsquerda.add(new JLabel("Durabilidade da chave mestra:")).setFont(new Font("SansSerif", Font.BOLD, 15));
+        painelEsquerda.add(new JLabel(String.valueOf(nTentativasMestra))).setFont(new Font("SansSerif", Font.PLAIN, 10));
     }
 
     /**

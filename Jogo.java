@@ -22,6 +22,8 @@ class Jogo {
     private Ambiente ambienteAtual;
     private String direcaoEscolhida;
     private Ambiente[] ambientes;
+    private int nTentativas;
+    private int nTentativasChaveMestra;
     private TelaPrincipal telaPrincipal;
 
     /**
@@ -29,7 +31,13 @@ class Jogo {
      */
     Jogo() {
         criarAmbientes();
+        criarNTentativas();
         criaTesouro();
+    }
+
+    private void criarNTentativas() {
+        nTentativas = new Random().nextInt(30) + 20;
+        nTentativasChaveMestra = 0;
     }
 
     private void criaTesouro() {
@@ -152,6 +160,8 @@ class Jogo {
                 if (saidas.length >= Integer.parseInt(comando.getSegundaPalavra())) {
                     proximoAmbiente = saidas[Integer.parseInt(comando.getSegundaPalavra()) - 1];
                     ambienteAtual = proximoAmbiente;
+                    nTentativas = this.nTentativas - 1;
+                    telaPrincipal.atualizaTentativas(nTentativas, nTentativasChaveMestra);
                 } else {
                     telaPrincipal.adicionaTextoConsole("Opção invalida!\n");
                 }
@@ -209,6 +219,8 @@ class Jogo {
                     } else if (saidas.length == 1) {
                         proximoAmbiente = saidas[0];
 						ambienteAtual = proximoAmbiente;
+                        nTentativas = this.nTentativas - 1;
+                        telaPrincipal.atualizaTentativas(nTentativas, nTentativasChaveMestra);
 
 						ImprimirLocalizacaoAtual();
                     }
@@ -232,5 +244,13 @@ class Jogo {
         } else {
             telaPrincipal.fechar();
         }
+    }
+
+    public int getNTentativas() {
+        return nTentativas;
+    }
+
+    public int getNTentativasChaveMestra() {
+        return nTentativasChaveMestra;
     }
 }
