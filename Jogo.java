@@ -67,8 +67,6 @@ class Jogo {
             if (randomAmbienteDicaUm.getDica().equals("") && randomAmbiente.getTemTesouro() == false) {
                 randomAmbienteDicaUm.setDica("<html><br> O tesouro não está <br> no(a) "
                         + randomAmbiente.getNome() + "</html>");
-                System.out.println("Dica um " + randomAmbienteDicaUm.getDica() +
-                        "\n AMbiente dica" + randomAmbienteDicaUm.getNome());
                 contraNumeroDeDicasGeradas++;
             }
         }
@@ -78,12 +76,6 @@ class Jogo {
         randomAmbienteDicaDois = ambientes[new Random().nextInt(ambientes.length)];
             randomAmbienteDicaDois.setDica("<html><br> O tesouro está <br> próximo ao(à) "
                     + vizinhoDoTesouro.getNome() + "</html>");
-
-        System.out.println("Ambiente Dica Dois" + randomAmbienteDicaDois.getNome());
-
-        System.out.println("Vizinho do tesouro" +
-                vizinhoDoTesouro.getNome() + " e o tesouro" + ambienteTesouro.getNome());
-
     }
 
     /**
