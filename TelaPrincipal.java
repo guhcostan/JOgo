@@ -58,7 +58,7 @@ class TelaPrincipal {
         painelSul.add(input);
 
         painelEsquerda.setLayout(new BoxLayout(painelDireita, BoxLayout.Y_AXIS));
-
+        painelDireita.setPreferredSize(new Dimension(200, 155));
         atualizaDicas();
         janela.add(painelEsquerda, BorderLayout.WEST);
         janela.add(painelDireita, BorderLayout.EAST);
@@ -67,16 +67,22 @@ class TelaPrincipal {
     }
 
     private void atualizaDicas() {
-        painelDireita.add(new JLabel("Dicas encontradas:")).setFont(new Font("SansSerif", Font.PLAIN, 10));
+        painelDireita.setLayout(new BoxLayout(painelDireita, BoxLayout.Y_AXIS));
+        painelDireita.add(new JLabel("Dicas encontradas:")).setFont(new Font("SansSerif", Font.PLAIN, 15));
+
+    }
+
+    public void atualizaDicas(String texto) {
+        painelDireita.add(new JLabel(texto)).setFont(new Font("SansSerif", Font.PLAIN, 15));
     }
 
     public void atualizaTentativas(int nTentativas, int nTentativasMestra) {
         painelEsquerda.removeAll();
         painelEsquerda.setLayout(new BoxLayout(painelEsquerda, BoxLayout.Y_AXIS));
-        painelEsquerda.add(new JLabel("Número de tentativas restantes:")).setFont(new Font("SansSerif", Font.BOLD, 15));
-        painelEsquerda.add(new JLabel(String.valueOf(nTentativas))).setFont(new Font("SansSerif", Font.PLAIN, 10));
-        painelEsquerda.add(new JLabel("Durabilidade da chave mestra:")).setFont(new Font("SansSerif", Font.BOLD, 15));
-        painelEsquerda.add(new JLabel(String.valueOf(nTentativasMestra))).setFont(new Font("SansSerif", Font.PLAIN, 10));
+        painelEsquerda.add(new JLabel("<html>Número de<br> tentativas restantes:<br></html>")).setFont(new Font("SansSerif", Font.BOLD, 16));
+        painelEsquerda.add(new JLabel(String.valueOf(nTentativas))).setFont(new Font("SansSerif", Font.PLAIN, 15));
+        painelEsquerda.add(new JLabel("<html><br>Durabilidade da<br> chave mestra:<br></html>")).setFont(new Font("SansSerif", Font.BOLD, 16));
+        painelEsquerda.add(new JLabel(String.valueOf(nTentativasMestra))).setFont(new Font("SansSerif", Font.PLAIN, 15));
     }
 
     /**

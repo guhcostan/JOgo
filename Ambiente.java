@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -18,6 +19,7 @@ import java.util.Map.Entry;
 public class Ambiente {
     private String nome;
     private boolean temTesouro = false;
+    private String dica = "";
     private HashMap<String, Ambiente[]> saidas = new HashMap<>();
 
     /**
@@ -28,19 +30,49 @@ public class Ambiente {
      *
      * @param descricao A descricao do ambiente.
      */
-    Ambiente(String nome) {
+    public Ambiente(String nome) {
         this.nome = nome;
     }
 
-    Ambiente[] getSaida(String direcao) {
+    public Ambiente[] getSaida(String direcao) {
         return this.saidas.get(direcao);
     }
 
-    void setTesouro() {
+    public ArrayList<Ambiente> getVizinho(){
+        ArrayList<Ambiente> vizinhos = new ArrayList<>();
+        for (Entry<String, Ambiente[]> saida : saidas.entrySet()) {
+
+            for (Ambiente ambiente : saida.getValue()) {
+                vizinhos.add(ambiente);
+            }
+        }
+        return vizinhos;
+    }
+
+    public boolean getTemTesouro(){
+        return this.temTesouro;
+    }
+
+    public void setTemTesouro() {
         this.temTesouro = true;
     }
 
-    String getTodasSaidas() {
+    /**
+     * @return A descricao do ambiente.
+     */
+    public String getNome() {
+        return nome;
+    }
+
+    public String getDica() {
+        return dica;
+    }
+
+    public void setDica(String dica){
+        this.dica = dica;
+    }
+
+    public String getTodasSaidas() {
         StringBuilder saidasString = new StringBuilder();
         for (Entry<String, Ambiente[]> saida : saidas.entrySet()) {
             saidasString.append("  ").append(saida.getKey()).append(":\n");
@@ -62,7 +94,7 @@ public class Ambiente {
      * @param sul   A saida sul.
      * @param oeste A saida oeste.
      */
-    void ajustarSaidas(Ambiente[] norte, Ambiente[] leste,
+    public void ajustarSaidas(Ambiente[] norte, Ambiente[] leste,
                        Ambiente[] sul, Ambiente[] oeste) {
         if (norte != null)
             saidas.put("norte", norte);
@@ -72,13 +104,6 @@ public class Ambiente {
             saidas.put("sul", sul);
         if (oeste != null)
             saidas.put("oeste", oeste);
-    }
-
-    /**
-     * @return A descricao do ambiente.
-     */
-    String getNome() {
-        return nome;
     }
 
     public void adicionarSaida(String direcao, Ambiente ambiente) {

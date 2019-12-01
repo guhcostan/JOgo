@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -32,7 +33,7 @@ class Jogo {
     Jogo() {
         criarAmbientes();
         criarNTentativas();
-        criaTesouro();
+        criarTesouro();
     }
 
     private void criarNTentativas() {
@@ -40,8 +41,49 @@ class Jogo {
         nTentativasChaveMestra = 0;
     }
 
-    private void criaTesouro() {
-        ambientes[new Random().nextInt(ambientes.length)].setTesouro();
+    private void criarTesouro() {
+        Ambiente ambienteTesouro = ambientes[new Random().nextInt(ambientes.length)];
+        ambienteTesouro.setTemTesouro();
+        gerarDicasParaAmbientes(ambienteTesouro);
+    }
+    /**
+     * Gera três dicas com o texto "O tesouro não está no(a) X" e uma dica com o texto "O tesouro está próximo ao(à)
+     * Y”
+     */
+    private void gerarDicasParaAmbientes(Ambiente ambienteTesouro) {
+
+        ArrayList<Ambiente> vizinhos;
+        Ambiente vizinhoDoTesouro;
+        Ambiente randomAmbienteDicaUm;
+        Ambiente randomAmbienteDicaDois;
+        Ambiente randomAmbiente;
+
+        int contraNumeroDeDicasGeradas = 0;
+        while (contraNumeroDeDicasGeradas < 3) {
+
+            randomAmbienteDicaUm = ambientes[new Random().nextInt(ambientes.length)];
+            randomAmbiente = ambientes[new Random().nextInt(ambientes.length)];
+
+            if (randomAmbienteDicaUm.getDica().equals("") && randomAmbiente.getTemTesouro() == false) {
+                randomAmbienteDicaUm.setDica("<html><br> O tesouro não está <br> no(a) "
+                        + randomAmbiente.getNome() + "</html>");
+                System.out.println("Dica um " + randomAmbienteDicaUm.getDica() +
+                        "\n AMbiente dica" + randomAmbienteDicaUm.getNome());
+                contraNumeroDeDicasGeradas++;
+            }
+        }
+
+        vizinhos = ambienteTesouro.getVizinho();
+        vizinhoDoTesouro = vizinhos.get(new Random().nextInt(vizinhos.size()));
+        randomAmbienteDicaDois = ambientes[new Random().nextInt(ambientes.length)];
+            randomAmbienteDicaDois.setDica("<html><br> O tesouro está <br> próximo ao(à) "
+                    + vizinhoDoTesouro.getNome() + "</html>");
+
+        System.out.println("Ambiente Dica Dois" + randomAmbienteDicaDois.getNome());
+
+        System.out.println("Vizinho do tesouro" +
+                vizinhoDoTesouro.getNome() + " e o tesouro" + ambienteTesouro.getNome());
+
     }
 
     /**
@@ -119,6 +161,8 @@ class Jogo {
 
         telaPrincipal.adicionaTextoConsole("Saidas: ");
         telaPrincipal.adicionaTextoConsole(ambienteAtual.getTodasSaidas());
+
+        telaPrincipal.atualizaDicas(ambienteAtual.getDica());
     }
 
     /**
