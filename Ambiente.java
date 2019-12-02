@@ -21,6 +21,7 @@ public class Ambiente {
     private boolean temTesouro = false;
     private String dica = "";
     private HashMap<String, Ambiente[]> saidas = new HashMap<>();
+    private int chaveMestra = 0;
 
     /**
      * Cria um ambiente com a "descricao" passada. Inicialmente, ele nao tem
@@ -70,6 +71,14 @@ public class Ambiente {
 
     public void setDica(String dica){
         this.dica = dica;
+    }
+
+    public void setChaveMestra(int chaveMestra){
+        this.chaveMestra = chaveMestra;
+    }
+
+    public int getChaveMestra(){
+        return chaveMestra;
     }
 
     public String getTodasSaidas() {

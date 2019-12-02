@@ -34,6 +34,7 @@ class Jogo {
         criarAmbientes();
         criarNTentativas();
         criarTesouro();
+        sortearChaveMestra();
     }
 
     private void criarNTentativas() {
@@ -76,6 +77,11 @@ class Jogo {
         randomAmbienteDicaDois = ambientes[new Random().nextInt(ambientes.length)];
             randomAmbienteDicaDois.setDica("<html><br> O tesouro está <br> próximo ao(à) "
                     + vizinhoDoTesouro.getNome() + "</html>");
+    }
+
+    private void sortearChaveMestra(){
+        Ambiente ambienteChaveMestra  = ambientes[new Random().nextInt(ambientes.length)];
+        ambienteChaveMestra.setChaveMestra(new Random().nextInt(ambientes.length));
     }
 
     /**
@@ -155,6 +161,11 @@ class Jogo {
         telaPrincipal.adicionaTextoConsole(ambienteAtual.getTodasSaidas());
 
         telaPrincipal.atualizaDicas(ambienteAtual.getDica());
+        if (ambienteAtual.getChaveMestra() != 0) {
+            nTentativasChaveMestra = ambienteAtual.getChaveMestra();
+            ambienteAtual.setChaveMestra(0);
+        }
+        telaPrincipal.atualizaTentativas(nTentativas, nTentativasChaveMestra);
     }
 
     /**
@@ -196,15 +207,14 @@ class Jogo {
                 if (saidas.length >= Integer.parseInt(comando.getSegundaPalavra())) {
                     proximoAmbiente = saidas[Integer.parseInt(comando.getSegundaPalavra()) - 1];
                     ambienteAtual = proximoAmbiente;
-                    nTentativas = this.nTentativas - 1;
-                    telaPrincipal.atualizaTentativas(nTentativas, nTentativasChaveMestra);
+                    debitaSaldoTentativas();
                 } else {
                     telaPrincipal.adicionaTextoConsole("Opção invalida!\n");
                 }
 
                 direcaoEscolhida = null;
-
                 ImprimirLocalizacaoAtual();
+
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -255,8 +265,8 @@ class Jogo {
                     } else if (saidas.length == 1) {
                         proximoAmbiente = saidas[0];
 						ambienteAtual = proximoAmbiente;
-                        nTentativas = this.nTentativas - 1;
-                        telaPrincipal.atualizaTentativas(nTentativas, nTentativasChaveMestra);
+
+                        debitaSaldoTentativas();
 
 						ImprimirLocalizacaoAtual();
                     }
@@ -288,5 +298,14 @@ class Jogo {
 
     public int getNTentativasChaveMestra() {
         return nTentativasChaveMestra;
+    }
+
+    private void debitaSaldoTentativas(){
+        if (nTentativasChaveMestra != 0) {
+            nTentativasChaveMestra = this.nTentativasChaveMestra - 1;
+        } else {
+            nTentativas = this.nTentativas - 1;
+        }
+        telaPrincipal.atualizaTentativas(nTentativas, nTentativasChaveMestra);
     }
 }
