@@ -16,6 +16,7 @@ class TelaPrincipal {
     private JScrollPane painelConsole;
     private JTextArea console;
     private JTextField input;
+    private ImagePanel imagem;
 
     TelaPrincipal(Jogo j) {
         janela = new JFrame("World of Zuul");
@@ -25,6 +26,7 @@ class TelaPrincipal {
         console = new JTextArea();
         painelConsole = new JScrollPane(console);
         input = new JTextField();
+        imagem = new ImagePanel("./imagens/imagem.png");
         jogo = j;
 
         input.addActionListener(new ActionListener() {
@@ -44,7 +46,7 @@ class TelaPrincipal {
      * e adiciona os campos, imagem, paineis na janela(JFrame)
      */
     private void montarJanela() {
-        janela.setSize(1000, 560);
+        janela.setSize(1050, 560);
         janela.setLayout(new BorderLayout());
 
         painelSul.setLayout(new BoxLayout(painelSul, BoxLayout.Y_AXIS));
@@ -62,7 +64,7 @@ class TelaPrincipal {
         atualizaDicas();
         janela.add(painelEsquerda, BorderLayout.WEST);
         janela.add(painelDireita, BorderLayout.EAST);
-        janela.add(new ImagePanel(), BorderLayout.CENTER);
+        janela.add(imagem, BorderLayout.CENTER);
         janela.add(painelSul, BorderLayout.SOUTH);
     }
 
@@ -137,6 +139,20 @@ class TelaPrincipal {
     void adicionaTextoConsole(String texto) {
         console.append(texto + "\n");
         rolarFinal();
+    }
+
+    public void addImagemGameOver() {
+        janela.remove(imagem);
+        imagem = new ImagePanel("./imagens/game_over.png");
+        janela.add(imagem, BorderLayout.CENTER);
+        janela.revalidate();
+    }
+
+    public void addImagemTesouro() {
+        janela.remove(imagem);
+        imagem = new ImagePanel("./imagens/tesouro.png");
+        janela.add(imagem, BorderLayout.CENTER);
+        janela.revalidate();
     }
 
 }

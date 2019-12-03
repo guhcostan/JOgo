@@ -9,11 +9,11 @@ public class ImagePanel extends JPanel {
 
     private BufferedImage image;
 
-    ImagePanel() {
+    public ImagePanel(String pastaArq) {
         try {
-            image = ImageIO.read(new File("./imagens/imagem.png"));
+            image = ImageIO.read(new File(pastaArq));
         } catch (IOException ex) {
-            // handle exception...
+            System.out.println(ex);
         }
     }
 

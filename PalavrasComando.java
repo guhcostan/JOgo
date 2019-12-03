@@ -12,7 +12,7 @@
 class PalavrasComando {
     // um vetor constante que guarda todas as palavras de comandos validas
     static final String[] comandosValidos = {
-            "ir", "sair", "opcao", "ajuda", "observar"
+            "ir", "sair", "opcao", "ajuda", "observar", "explodir"
     };
 
     /**
