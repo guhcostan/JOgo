@@ -46,14 +46,14 @@ class TelaPrincipal {
      * e adiciona os campos, imagem, paineis na janela(JFrame)
      */
     private void montarJanela() {
-        janela.setSize(1050, 560);
+        janela.setSize(1050, 620);
         janela.setLayout(new BorderLayout());
 
         painelSul.setLayout(new BoxLayout(painelSul, BoxLayout.Y_AXIS));
 
         console.setEditable(false);
 
-        painelConsole.setPreferredSize(new Dimension(1000, 155));
+        painelConsole.setPreferredSize(new Dimension(1000, 200));
         painelConsole.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
         painelSul.add(painelConsole);
@@ -84,6 +84,7 @@ class TelaPrincipal {
         painelEsquerda.add(new JLabel("<html>Número de<br> tentativas restantes:<br></html>")).setFont(new Font("SansSerif", Font.BOLD, 16));
         painelEsquerda.add(new JLabel(String.valueOf(nTentativas))).setFont(new Font("SansSerif", Font.PLAIN, 15));
         painelEsquerda.add(new JLabel("<html><br>Durabilidade da<br> chave mestra:<br></html>")).setFont(new Font("SansSerif", Font.BOLD, 16));
+        System.out.println(nTentativasMestra);
         painelEsquerda.add(new JLabel(String.valueOf(nTentativasMestra))).setFont(new Font("SansSerif", Font.PLAIN, 15));
     }
 
@@ -96,15 +97,6 @@ class TelaPrincipal {
         janela.setLocationRelativeTo(null);
         janela.setResizable(false);
         janela.setVisible(true);
-    }
-
-    /**
-     * Retorna o input (JTextField) da janela
-     *
-     * @return Retorna o input da janela
-     */
-    JTextField getInput() {
-        return input;
     }
 
     /**
@@ -131,6 +123,13 @@ class TelaPrincipal {
         rolarFinal();
     }
 
+    public void warning(String texto){
+        Toolkit.getDefaultToolkit().beep();
+        JOptionPane optionPane = new JOptionPane(texto,JOptionPane.WARNING_MESSAGE);
+        JDialog dialog = optionPane.createDialog("Warning!");
+        dialog.setAlwaysOnTop(true);
+        dialog.setVisible(true);
+    }
     /**
      * Adiciona no console um texto que é informado por parâmetro e também uma quebra de linha
      *
@@ -155,4 +154,11 @@ class TelaPrincipal {
         janela.revalidate();
     }
 
+    public void travarInput() {
+        input.setEditable(false);
+    }
+
+    public JTextField getInput() {
+        return input;
+    }
 }

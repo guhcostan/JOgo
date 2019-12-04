@@ -1,3 +1,7 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Esta classe eh parte da aplicacao "World of Zuul".
  * "World of Zuul" eh um jogo de aventura muito simples, baseado em texto.
@@ -11,15 +15,27 @@
 
 class PalavrasComando {
     // um vetor constante que guarda todas as palavras de comandos validas
-    static final String[] comandosValidos = {
-            "ir", "sair", "opcao", "ajuda", "observar", "explodir"
-    };
+    static List<String> comandosValidos = new ArrayList<>();
 
+    private static PalavrasComando instance;
     /**
      * Construtor - inicializa as palavras de comando.
      */
     PalavrasComando() {
-        // nada a fazer no momento...
+        comandosValidos = Arrays.asList(
+            "ir", "sair", "opcao", "ajuda", "observar", "explodir"
+        );
+    }
+
+    public static PalavrasComando getInstance(){
+        if(instance == null) {
+            synchronized(PalavrasComando.class) {
+                if(instance == null) {
+                    instance = new PalavrasComando();
+                }
+            }
+        }
+        return instance;
     }
 
     /**
@@ -29,11 +45,6 @@ class PalavrasComando {
      * false se nao eh.
      */
     boolean ehComando(String umaString) {
-        for (int i = 0; i < comandosValidos.length; i++) {
-            if (comandosValidos[i].equals(umaString))
-                return true;
-        }
-        // se chegamos aqui, a string nao foi encontrada nos comandos.
-        return false;
+       return comandosValidos.contains(umaString);
     }
 }

@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -23,6 +24,7 @@ class Jogo {
     private Ambiente ambienteAtual;
     private String direcaoEscolhida;
     private Ambiente[] ambientes;
+    private ArrayList<String> dicasEncontradas = new ArrayList<>();
     private int nTentativas;
     private int nTentativasChaveMestra;
     private TelaPrincipal telaPrincipal;
@@ -32,6 +34,7 @@ class Jogo {
      * Cria o jogo e incializa seu mapa interno.
      */
     Jogo() {
+        BancoDeDados.iniciar();
         criarAmbientes();
         criarNTentativas();
         criarTesouro();
@@ -48,7 +51,12 @@ class Jogo {
 
         Ambiente ambienteTesouro = ambientes[new Random().nextInt(ambientes.length)];
         ambienteTesouro.setTemTesouro();
-        gerarDicasParaAmbientes(ambienteTesouro);
+	    try {
+		    BancoDeDados.gravar("O ambiente do tesouro é: " + ambienteTesouro.getNome());
+	    } catch (IOException e) {
+		    telaPrincipal.warning("Erro ao gravar dicas no banco de dados");
+	    }
+	    gerarDicasParaAmbientes(ambienteTesouro);
 
         System.out.println(ambienteTesouro.getNome());
     }
@@ -72,8 +80,14 @@ class Jogo {
             randomAmbiente = ambientes[new Random().nextInt(ambientes.length)];
 
             if (randomAmbienteDicaUm.getDica().equals("") && randomAmbiente.getTemTesouro() == false) {
-                randomAmbienteDicaUm
-                        .setDica("<html><br> O tesouro não está <br> no(a) " + randomAmbiente.getNome() + "</html>");
+                String dica = "<html><br> O tesouro não está <br> no(a) " + randomAmbiente.getNome() + "</html>";
+	            try {
+		            BancoDeDados.gravar("Dica " + contraNumeroDeDicasGeradas + "(" + randomAmbienteDicaUm.getNome() + "): " + dica);
+	            } catch (IOException e) {
+		            telaPrincipal.warning("Erro ao gravar dicas no banco de dados");
+	            }
+	            randomAmbienteDicaUm
+                        .setDica(dica);
                 contraNumeroDeDicasGeradas++;
             }
         }
@@ -81,8 +95,14 @@ class Jogo {
         vizinhos = ambienteTesouro.getVizinho();
         vizinhoDoTesouro = vizinhos.get(new Random().nextInt(vizinhos.size()));
         randomAmbienteDicaDois = ambientes[new Random().nextInt(ambientes.length)];
-        randomAmbienteDicaDois
-                .setDica("<html><br> O tesouro está <br> próximo ao(à) " + vizinhoDoTesouro.getNome() + "</html>");
+        String dicaVizinha = "<html><br> O tesouro está <br> próximo ao(à) " + vizinhoDoTesouro.getNome() + "</html>";
+	    try {
+		    BancoDeDados.gravar("Dica vizinha(" + randomAmbienteDicaDois.getNome() + "):" + dicaVizinha);
+	    } catch (IOException e) {
+		    telaPrincipal.warning("Erro ao gravar dicas no banco de dados");
+	    }
+	    randomAmbienteDicaDois
+                .setDica(dicaVizinha);
     }
 
     private void sortearChaveMestra() {
@@ -168,7 +188,10 @@ class Jogo {
         telaPrincipal.adicionaTextoConsole("Saidas: ");
         telaPrincipal.adicionaTextoConsole(ambienteAtual.getTodasSaidas());
 
-        telaPrincipal.atualizaDicas(ambienteAtual.getDica());
+        if(!dicasEncontradas.contains(ambienteAtual.getDica())){
+            dicasEncontradas.add(ambienteAtual.getDica());
+            telaPrincipal.atualizaDicas(ambienteAtual.getDica());
+        }
         if (ambienteAtual.getChaveMestra() != 0) {
             telaPrincipal.adicionaTextoConsole("Você encontrou a chave mestra.");
             telaPrincipal.adicionaTextoConsole("Agora você pode entrar em lugares onde a porta está emperrada.\n");
@@ -282,7 +305,16 @@ class Jogo {
                         direcaoEscolhida = direcao;
                     } else if (saidas.length == 1) {
                         proximoAmbiente = saidas[0];
-                        ambienteAtual = proximoAmbiente;
+
+                        if (nTentativasChaveMestra > 0) {
+                            ambienteAtual = proximoAmbiente;
+                        }else{
+                            if(new Random().nextBoolean()){
+                                ambienteAtual = proximoAmbiente;
+                            }else{
+                                telaPrincipal.warning("A porta estava trancada, tente novamente ou utilize uma chave mestra\n");
+                            }
+                        }
 
                         debitaSaldoTentativas();
 
@@ -349,7 +381,7 @@ class Jogo {
     }
 
     private void fimDeJogo() {
-        telaPrincipal.getInput().setEditable(false);
+        telaPrincipal.travarInput();
     }
 
     private void verificaEhUltimaTentaiva() {
