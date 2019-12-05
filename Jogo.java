@@ -202,6 +202,8 @@ class Jogo {
             nTentativasChaveMestra = ambienteAtual.getChaveMestra();
             ambienteAtual.setChaveMestra(0);
         }
+
+        telaPrincipal.atualizaTentativas(nTentativas, nTentativasChaveMestra);
     }
 
     /**
@@ -403,8 +405,6 @@ class Jogo {
         } else if (perguntaChaveMestra == JOptionPane.NO_OPTION) {
             nTentativas = this.nTentativas - 1;
         }
-
-        telaPrincipal.atualizaTentativas(nTentativas, nTentativasChaveMestra);
     }
 
     /**
