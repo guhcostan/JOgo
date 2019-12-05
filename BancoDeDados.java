@@ -21,8 +21,8 @@ public class BancoDeDados {
 	/**
 	 * Metodo de inicialização do banco de dados, criando ou recriando o arquivo
 	 */
-	public static void iniciar(){
-		if(arquivo.exists()){
+	public static void iniciar() {
+		if (arquivo.exists()) {
 			arquivo.delete();
 		}
 		try {
@@ -34,13 +34,14 @@ public class BancoDeDados {
 
 	/**
 	 * Metodo de gravação de textos no banco de dados
+	 *
 	 * @param texto
 	 * @throws IOException
 	 */
 	public static void gravar(String texto) throws IOException {
-		try(PrintWriter escritorTexto = new PrintWriter(new FileWriter(nomeArquivo, true))){
+		try (PrintWriter escritorTexto = new PrintWriter(new FileWriter(nomeArquivo, true))) {
 			escritorTexto.printf(texto + "\n");
-		}catch (Exception e){
+		} catch (Exception e) {
 			throw e;
 		}
 	}
