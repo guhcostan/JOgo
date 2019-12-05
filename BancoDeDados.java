@@ -11,7 +11,7 @@ public class BancoDeDados {
 	/**
 	 * Atributo que contem o nome do arquivo que será o banco de dados
 	 */
-	private static String nomeArquivo = "db.txt";
+	private static String nomeArquivo = "arquivos/db.txt";
 
 	/**
 	 * Atributo que contem referencia pro arquivo

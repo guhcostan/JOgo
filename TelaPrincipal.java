@@ -89,14 +89,15 @@ class TelaPrincipal {
         painelDireita.add(new JLabel(texto)).setFont(new Font("SansSerif", Font.PLAIN, 15));
     }
 
-    public void atualizaTentativas(int nTentativas, int nTentativasMestra) {
+    public void atualizaTentativas(Integer nTentativas, Integer nTentativasMestra) {
         painelEsquerda.removeAll();
         painelEsquerda.setLayout(new BoxLayout(painelEsquerda, BoxLayout.Y_AXIS));
-        painelEsquerda.add(new JLabel("<html>Número de<br> tentativas restantes:<br></html>")).setFont(new Font("SansSerif", Font.BOLD, 16));
-        painelEsquerda.add(new JLabel(String.valueOf(nTentativas))).setFont(new Font("SansSerif", Font.PLAIN, 15));
-        painelEsquerda.add(new JLabel("<html><br>Durabilidade da<br> chave mestra:<br></html>")).setFont(new Font("SansSerif", Font.BOLD, 16));
+        System.out.println(nTentativas);
         System.out.println(nTentativasMestra);
-        painelEsquerda.add(new JLabel(String.valueOf(nTentativasMestra))).setFont(new Font("SansSerif", Font.PLAIN, 15));
+        painelEsquerda.add(new JLabel("<html>Número de<br> tentativas restantes:<br></html>")).setFont(new Font("SansSerif", Font.BOLD, 16));
+        painelEsquerda.add(new JLabel(nTentativas.toString())).setFont(new Font("SansSerif", Font.PLAIN, 15));
+        painelEsquerda.add(new JLabel("<html><br>Durabilidade da<br> chave mestra:<br></html>")).setFont(new Font("SansSerif", Font.BOLD, 16));
+        painelEsquerda.add(new JLabel(nTentativasMestra.toString())).setFont(new Font("SansSerif", Font.PLAIN, 15));
     }
 
     /**
@@ -151,6 +152,9 @@ class TelaPrincipal {
         rolarFinal();
     }
 
+    /**
+     * Substitui a imagem da janela por outra com uma mensagem de game over
+     */
     public void addImagemGameOver() {
         janela.remove(imagem);
         imagem = new ImagePanel("./imagens/game_over.png");
@@ -158,6 +162,11 @@ class TelaPrincipal {
         janela.revalidate();
     }
 
+
+    /**
+     * Substitui a imagem da janela por outra com um tesouro, para simbolizar
+     * que ele foi encontrado
+     */
     public void addImagemTesouro() {
         janela.remove(imagem);
         imagem = new ImagePanel("./imagens/tesouro.png");
