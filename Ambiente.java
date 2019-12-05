@@ -17,10 +17,26 @@ import java.util.Map.Entry;
  * @version 2011.07.31 (2016.02.01)
  */
 public class Ambiente {
+
+    /**
+     * Atributo que da nome ao ambiente
+     */
     private String nome;
+    /**
+     * Atributo que informa se ambiente possui o tesouro
+     */
     private boolean temTesouro = false;
+    /**
+     * Atributo que informa a dica que o ambiente possui
+     */
     private String dica = "";
+    /**
+     * Atributo que contem todas as saidas ligada ao ambiente
+     */
     private HashMap<String, Ambiente[]> saidas = new HashMap<>();
+    /**
+     * Atributo que diz se a chave mestra esta no ambiente
+     */
     private int chaveMestra = 0;
 
     /**
@@ -35,10 +51,19 @@ public class Ambiente {
         this.nome = nome;
     }
 
+    /**
+     * Metodo para se obter a saida referente a direção informada
+     * @param direcao
+     * @return saidas
+     */
     public Ambiente[] getSaida(String direcao) {
         return this.saidas.get(direcao);
     }
 
+    /**
+     * Metodo que retorna os ambientes vizinhos ao ambiente ambiente
+     * @return ambientesVizinhos
+     */
     public ArrayList<Ambiente> getVizinho(){
         ArrayList<Ambiente> vizinhos = new ArrayList<>();
         for (Entry<String, Ambiente[]> saida : saidas.entrySet()) {
@@ -50,37 +75,64 @@ public class Ambiente {
         return vizinhos;
     }
 
+    /**
+     * Metodo para conferir se ambiente possui o tesouro
+     * @return se tem tesouro
+     */
     public boolean getTemTesouro(){
         return this.temTesouro;
     }
 
+    /**
+     * Metodo para adicionar tesouro no ambiente
+     */
     public void setTemTesouro() {
         this.temTesouro = true;
     }
 
     /**
-     * @return A descricao do ambiente.
+     * @return O nome do ambiente.
      */
     public String getNome() {
         return nome;
     }
 
+    /**
+     * Metodo para pegar dica do ambiente
+     * @return dica
+     */
     public String getDica() {
         return dica;
     }
 
+    /**
+     * Metodo para instalar dica no ambiente
+     * @param dica
+     */
     public void setDica(String dica){
         this.dica = dica;
     }
 
+    /**
+     * Metodo para colocar chave mestra no ambiente
+     * @param chaveMestra
+     */
     public void setChaveMestra(int chaveMestra){
         this.chaveMestra = chaveMestra;
     }
 
+    /**
+     * Meotodo para pegar a chaveMestra
+     * @return chaveMestra
+     */
     public int getChaveMestra(){
         return chaveMestra;
     }
 
+    /**
+     * Metodo para retornar todas as saidas do ambiente atual
+     * @return saidas
+     */
     public String getTodasSaidas() {
         StringBuilder saidasString = new StringBuilder();
         for (Entry<String, Ambiente[]> saida : saidas.entrySet()) {
@@ -115,6 +167,11 @@ public class Ambiente {
             saidas.put("oeste", oeste);
     }
 
+    /**
+     * Metodo para adicionar nova saida ao ambiente
+     * @param direcao
+     * @param ambiente
+     */
     public void adicionarSaida(String direcao, Ambiente ambiente) {
         Ambiente[] ambientes = saidas.get(direcao);
         ambientes[ambientes.length] = ambiente;

@@ -18,7 +18,14 @@
  */
 
 class Comando {
+
+    /**
+     * Comando principal, que descreve a ação
+     */
     private String palavraDeComando;
+    /**
+     * Comando que descreve como a ação deve ser tomada
+     */
     private String segundaPalavra;
 
     /**

@@ -20,18 +20,49 @@ import java.util.Random;
  */
 
 class Jogo {
+
+    /**
+     * Analisador dos comando do jogo
+     */
     private Analisador analisador;
+
+    /**
+     * Ambiente que o jogador se encontra
+     */
     private Ambiente ambienteAtual;
+    /**
+     * Direção para o jogador deseja ir
+     */
     private String direcaoEscolhida;
+    /**
+     * Ambientes que o jogo possui
+     */
     private Ambiente[] ambientes;
+
+    /**
+     * Dicas encontradas pelo jogador
+     */
     private ArrayList<String> dicasEncontradas = new ArrayList<>();
+    /**
+     * Número de tentativas que o jogador possui
+     */
     private int nTentativas;
+
+    /**
+     * Numero de tentativas que o jogador possui graças a chave mestra
+     */
     private int nTentativasChaveMestra;
+    /**
+     * Referencia a interface grafica
+     */
     private TelaPrincipal telaPrincipal;
+    /**
+     * Se o jogador possui a bomba
+     */
     private boolean temCargaExplosiva;
 
     /**
-     * Cria o jogo e incializa seu mapa interno.
+     * Cria o jogo e incializa seu mapa interno, dicas, tesouros, chave mestra e as tentativas.
      */
     Jogo() {
         BancoDeDados.iniciar();
@@ -41,11 +72,17 @@ class Jogo {
         sortearChaveMestra();
     }
 
+    /**
+     * Sorteia numero de tentativas do jogador
+     */
     private void criarNTentativas() {
         nTentativas = new Random().nextInt(30) + 20;
         nTentativasChaveMestra = 0;
     }
 
+    /**
+     * Sorteia localização do tesouro
+     */
     private void criarTesouro() {
         temCargaExplosiva = true;
 
@@ -105,6 +142,9 @@ class Jogo {
                 .setDica(dicaVizinha);
     }
 
+    /**
+     * Sorteia onde se encontra a chave mestra
+     */
     private void sortearChaveMestra() {
         Ambiente ambienteChaveMestra = ambientes[new Random().nextInt(ambientes.length)];
         ambienteChaveMestra.setChaveMestra(new Random().nextInt(ambientes.length));
@@ -234,6 +274,10 @@ class Jogo {
         }
     }
 
+    /**
+     * Caso o jogador vá para uma direção que possua diversos caminhos é nescessario que ele escolha um destes caminhos
+     * @param comando para onde ele deseja ir
+     */
     private void escolherOpcao(Comando comando) {
         Ambiente proximoAmbiente = null;
 
@@ -344,14 +388,23 @@ class Jogo {
         }
     }
 
+    /**
+     * @return retorna o numero de tentativas que o jogador possui
+     */
     public int getNTentativas() {
         return nTentativas;
     }
 
+    /**
+     * @return retorna o numero de tentativas com a chave mestra que o jogador possui
+     */
     public int getNTentativasChaveMestra() {
         return nTentativasChaveMestra;
     }
 
+    /**
+     * Retira uma tentativa do jogador, sendo debitada da chave mestra ou das principais
+     */
     private void debitaSaldoTentativas() {
         if (nTentativasChaveMestra != 0) {
             nTentativasChaveMestra = this.nTentativasChaveMestra - 1;
@@ -362,6 +415,9 @@ class Jogo {
         telaPrincipal.atualizaTentativas(nTentativas, nTentativasChaveMestra);
     }
 
+    /**
+     * Comando para checar se o jogador está no local da bomba e finalizar o jogo
+     */
     private void explodir() {
         if (temCargaExplosiva) {
             telaPrincipal.adicionaTextoConsole("BOOOOM!");
@@ -380,10 +436,16 @@ class Jogo {
         fimDeJogo();
     }
 
+    /**
+     * Encerra o programa
+     */
     private void fimDeJogo() {
         telaPrincipal.travarInput();
     }
 
+    /**
+     * Verifica se o jogador ainda possui tentativas
+     */
     private void verificaEhUltimaTentaiva() {
         if (nTentativas == 0 && temCargaExplosiva) {
             telaPrincipal.adicionaTextoConsole("Seu número de tentativas acabou."

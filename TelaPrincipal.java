@@ -18,6 +18,10 @@ class TelaPrincipal {
     private JTextField input;
     private ImagePanel imagem;
 
+    /**
+     * Inicia a parte grafica do jogo
+     * @param j referencia para jogo
+     */
     TelaPrincipal(Jogo j) {
         janela = new JFrame("World of Zuul");
         painelEsquerda = new JPanel();
@@ -68,16 +72,28 @@ class TelaPrincipal {
         janela.add(painelSul, BorderLayout.SOUTH);
     }
 
+    /**
+     * Cria texto inicial do quadro de dicas
+     */
     private void atualizaDicas() {
         painelDireita.setLayout(new BoxLayout(painelDireita, BoxLayout.Y_AXIS));
         painelDireita.add(new JLabel("Dicas encontradas:")).setFont(new Font("SansSerif", Font.PLAIN, 15));
 
     }
 
+    /**
+     * Atualiza quadro de dicas com nova dica
+     * @param texto texto da nova dica
+     */
     public void atualizaDicas(String texto) {
         painelDireita.add(new JLabel(texto)).setFont(new Font("SansSerif", Font.PLAIN, 15));
     }
 
+    /**
+     * Atualiza quadro a esquerda com contadores de tentativas para chave mestra e normal
+     * @param nTentativas Numero de tentativas do jogador
+     * @param nTentativasMestra Numero de tentativas da durabilidade da chave mestra
+     */
     public void atualizaTentativas(int nTentativas, int nTentativasMestra) {
         painelEsquerda.removeAll();
         painelEsquerda.setLayout(new BoxLayout(painelEsquerda, BoxLayout.Y_AXIS));
@@ -123,6 +139,10 @@ class TelaPrincipal {
         rolarFinal();
     }
 
+    /**
+     * Exibe um dialog com uma mensagem de alerta
+     * @param texto Texto da mensagem de alerta
+     */
     public void warning(String texto){
         Toolkit.getDefaultToolkit().beep();
         JOptionPane optionPane = new JOptionPane(texto,JOptionPane.WARNING_MESSAGE);
@@ -140,6 +160,9 @@ class TelaPrincipal {
         rolarFinal();
     }
 
+    /**
+     * Adiciona a imagem de fim de jogo
+     */
     public void addImagemGameOver() {
         janela.remove(imagem);
         imagem = new ImagePanel("./imagens/game_over.png");
@@ -147,6 +170,9 @@ class TelaPrincipal {
         janela.revalidate();
     }
 
+    /**
+     * Adiciona a imagem do tesouro ao encontrar
+     */
     public void addImagemTesouro() {
         janela.remove(imagem);
         imagem = new ImagePanel("./imagens/tesouro.png");
@@ -154,10 +180,17 @@ class TelaPrincipal {
         janela.revalidate();
     }
 
+    /**
+     * Impede usuario de realizar mais ações desabilitando a entrada de comandos
+     */
     public void travarInput() {
         input.setEditable(false);
     }
 
+    /**
+     * Retorna a referencia do input para poder ser ligada ao analisador
+     * @return Referencia para o input
+     */
     public JTextField getInput() {
         return input;
     }

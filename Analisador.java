@@ -19,7 +19,14 @@ import java.util.Scanner;
  * @version 2011.07.31 (2016.02.01)
  */
 class Analisador {
+
+    /**
+     * Guarda todas as palavras de comando validas
+     */
     private PalavrasComando palavrasDeComando;  // guarda todas as palavras de comando validas
+    /**
+     * Origem da entrada de dados
+     */
     private JTextField entrada;         // origem da entrada de comandos
 
     /**

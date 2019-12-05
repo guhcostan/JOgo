@@ -14,9 +14,14 @@ import java.util.List;
  */
 
 class PalavrasComando {
-    // um vetor constante que guarda todas as palavras de comandos validas
+    /**
+     * um vetor constante que guarda todas as palavras de comandos validas
+     */
     static List<String> comandosValidos = new ArrayList<>();
 
+    /**
+     * Instancia unica da classe
+     */
     private static PalavrasComando instance;
     /**
      * Construtor - inicializa as palavras de comando.
@@ -27,6 +32,10 @@ class PalavrasComando {
         );
     }
 
+    /**
+     * Sigleton para garantir o uso da instancia unica
+     * @return instancia
+     */
     public static PalavrasComando getInstance(){
         if(instance == null) {
             synchronized(PalavrasComando.class) {
