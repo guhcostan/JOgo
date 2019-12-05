@@ -20,9 +20,10 @@ public class BancoDeDados {
 	}
 
 	public static void gravar(String texto) throws IOException {
-		PrintWriter escritorTexto = new PrintWriter(new FileWriter(nomeArquivo, true));
-		escritorTexto.printf(texto + "\n");
-		escritorTexto.close();
-		escritorTexto.close();
+		try(PrintWriter escritorTexto = new PrintWriter(new FileWriter(nomeArquivo, true))){
+			escritorTexto.printf(texto + "\n");
+		}catch (Exception e){
+			throw e;
+		}
 	}
 }
