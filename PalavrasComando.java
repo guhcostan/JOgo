@@ -3,11 +3,11 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Esta classe eh parte da aplicacao "World of Zuul". "World of Zuul" eh um jogo de aventura muito
- * simples, baseado em texto.
+ * Esta classe eh parte da aplicacao "World of Zuul". "World of Zuul" eh um jogo
+ * de aventura muito simples, baseado em texto.
  * <p>
- * Essa classe guarda uma enumeracao de todos os comandos conhecidos do jogo. Ela eh usada no
- * reconhecimento de comandos como eles sao digitados.
+ * Essa classe guarda uma enumeracao de todos os comandos conhecidos do jogo.
+ * Ela eh usada no reconhecimento de comandos como eles sao digitados.
  *
  * @author Michael Kölling and David J. Barnes (traduzido por Julio Cesar Alves)
  * @version 2011.07.31 (2016.02.01)
@@ -29,9 +29,7 @@ class PalavrasComando {
 	 * Construtor - inicializa as palavras de comando.
 	 */
 	PalavrasComando() {
-		comandosValidos = Arrays.asList(
-			"ir", "sair", "opcao", "ajuda", "observar", "explodir"
-		);
+		comandosValidos = Arrays.asList("ir", "sair", "opcao", "ajuda", "observar", "explodir");
 	}
 
 	/**

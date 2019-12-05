@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * Essa é a classe principal da aplicação "World of Zull". "World of Zuul" é
- * um jogo de aventura muito simples, baseado em texto. Usuarios podem caminhar
- * em um cenario. E é tudo! Ele realmente precisa ser estendido para fazer algo
+ * Essa é a classe principal da aplicação "World of Zull". "World of Zuul" é um
+ * jogo de aventura muito simples, baseado em texto. Usuarios podem caminhar em
+ * um cenario. E é tudo! Ele realmente precisa ser estendido para fazer algo
  * interessante!
  * <p>
- * Para jogar esse jogo, crie uma instancia dessa classe e chame o metodo "jogar".
+ * Para jogar esse jogo, crie uma instancia dessa classe e chame o metodo
+ * "jogar".
  * <p>
  * Essa classe principal cria e inicializa todas as outras: ela cria os
  * ambientes, cria o analisador e começa o jogo. Ela tambeme avalia e executa os
@@ -31,8 +32,9 @@ class Jogo {
     private boolean temCargaExplosiva;
 
     /**
-     * Construtor padrão da classe Jogo. Cria Ambientes, gera um número aleatório de tentativas para o jogador,
-     * cria o tesouro e sorteia em que ambiente a chave mestra vai ser definida
+     * Construtor padrão da classe Jogo. Cria Ambientes, gera um número aleatório de
+     * tentativas para o jogador, cria o tesouro e sorteia em que ambiente a chave
+     * mestra vai ser definida
      */
     Jogo() {
         BancoDeDados.iniciar();
@@ -87,8 +89,9 @@ class Jogo {
     }
 
     private void criarNTentativas() {
-        nTentativas = new Random().nextInt(30) + 20;
-        nTentativasChaveMestra = 0;
+        // nTentativas = new Random().nextInt(30) + 20;
+        nTentativas = 1;
+        nTentativasChaveMestra = 10;
     }
 
     private void criarTesouro() {
@@ -96,12 +99,12 @@ class Jogo {
 
         Ambiente ambienteTesouro = ambientes[new Random().nextInt(ambientes.length)];
         ambienteTesouro.setTemTesouro();
-	    try {
-		    BancoDeDados.gravar("O ambiente do tesouro é: " + ambienteTesouro.getNome());
-	    } catch (IOException e) {
-		    telaPrincipal.warning("Erro ao gravar dicas no banco de dados");
-	    }
-	    gerarDicasParaAmbientes(ambienteTesouro);
+        try {
+            BancoDeDados.gravar("O ambiente do tesouro é: " + ambienteTesouro.getNome());
+        } catch (IOException e) {
+            telaPrincipal.warning("Erro ao gravar dicas no banco de dados");
+        }
+        gerarDicasParaAmbientes(ambienteTesouro);
     }
 
     /**
@@ -124,13 +127,13 @@ class Jogo {
 
             if (randomAmbienteDicaUm.getDica().equals("") && randomAmbiente.getTemTesouro() == false) {
                 String dica = "<html><br> O tesouro não está <br> no(a) " + randomAmbiente.getNome() + "</html>";
-	            try {
-		            BancoDeDados.gravar("Dica " + (contNumDicas + 1) + "(" + randomAmbienteDicaUm.getNome() + "): " + dica);
-	            } catch (IOException e) {
-		            telaPrincipal.warning("Erro ao gravar dicas no banco de dados");
-	            }
-	            randomAmbienteDicaUm
-                        .setDica(dica);
+                try {
+                    BancoDeDados
+                            .gravar("Dica " + (contNumDicas + 1) + "(" + randomAmbienteDicaUm.getNome() + "): " + dica);
+                } catch (IOException e) {
+                    telaPrincipal.warning("Erro ao gravar dicas no banco de dados");
+                }
+                randomAmbienteDicaUm.setDica(dica);
                 contNumDicas++;
             }
         }
@@ -139,13 +142,12 @@ class Jogo {
         vizinhoDoTesouro = vizinhos.get(new Random().nextInt(vizinhos.size()));
         randomAmbienteDicaDois = ambientes[new Random().nextInt(ambientes.length)];
         String dicaVizinha = "<html><br> O tesouro está <br> próximo ao(à) " + vizinhoDoTesouro.getNome() + "</html>";
-	    try {
-		    BancoDeDados.gravar("Dica vizinha(" + randomAmbienteDicaDois.getNome() + "):" + dicaVizinha);
-	    } catch (IOException e) {
-		    telaPrincipal.warning("Erro ao gravar dicas no banco de dados");
-	    }
-	    randomAmbienteDicaDois
-                .setDica(dicaVizinha);
+        try {
+            BancoDeDados.gravar("Dica vizinha(" + randomAmbienteDicaDois.getNome() + "):" + dicaVizinha);
+        } catch (IOException e) {
+            telaPrincipal.warning("Erro ao gravar dicas no banco de dados");
+        }
+        randomAmbienteDicaDois.setDica(dicaVizinha);
     }
 
     private void sortearChaveMestra() {
@@ -153,10 +155,10 @@ class Jogo {
         ambienteChaveMestra.setChaveMestra(new Random().nextInt(ambientes.length));
 
         try {
-		    BancoDeDados.gravar("Ambiente com a chave mestra: " + ambienteChaveMestra.getNome());
-	    } catch (IOException e) {
-		    telaPrincipal.warning("Erro ao gravar dicas no banco de dados");
-	    }
+            BancoDeDados.gravar("Ambiente com a chave mestra: " + ambienteChaveMestra.getNome());
+        } catch (IOException e) {
+            telaPrincipal.warning("Erro ao gravar dicas no banco de dados");
+        }
     }
 
     /**
@@ -191,7 +193,7 @@ class Jogo {
         telaPrincipal.adicionaTextoConsole("Saidas: ");
         telaPrincipal.adicionaTextoConsole(ambienteAtual.getTodasSaidas());
 
-        if(!dicasEncontradas.contains(ambienteAtual.getDica())){
+        if (!dicasEncontradas.contains(ambienteAtual.getDica())) {
             dicasEncontradas.add(ambienteAtual.getDica());
             telaPrincipal.atualizaDicas(ambienteAtual.getDica());
         }
@@ -201,7 +203,6 @@ class Jogo {
             nTentativasChaveMestra = ambienteAtual.getChaveMestra();
             ambienteAtual.setChaveMestra(0);
         }
-        telaPrincipal.atualizaTentativas(nTentativas, nTentativasChaveMestra);
     }
 
     /**
@@ -238,7 +239,9 @@ class Jogo {
     }
 
     /**
-     * Caso haja duas opções de direção a serem escoplidas é solicitado ao usuário que ele informe qual delas deseja seguir
+     * Caso haja duas opções de direção a serem escoplidas é solicitado ao usuário
+     * que ele informe qual delas deseja seguir
+     * 
      * @param comando
      */
     private void escolherOpcao(Comando comando) {
@@ -290,7 +293,7 @@ class Jogo {
      * contrario imprime mensagem de erro.
      */
     private void irParaAmbiente(Comando comando) {
-        if (nTentativas == 0) {
+        if (nTentativas == 0 && nTentativasChaveMestra == 0) {
             telaPrincipal.adicionaTextoConsole("Você não pode mais se mover! Seu número de tentativas acabou.\n");
         } else if (!comando.temSegundaPalavra()) {
             // se nao ha segunda palavra, nao sabemos pra onde ir...
@@ -343,6 +346,7 @@ class Jogo {
 
     /**
      * Retorna o número de tentativas que ainda existem
+     * 
      * @return nTentativas
      */
     public Integer getNTentativas() {
@@ -351,25 +355,31 @@ class Jogo {
 
     /**
      * Retorna o número de durabilidade da chave mestra
+     * 
      * @return nTentativas
      */
     public Integer getNTentativasChaveMestra() {
         return nTentativasChaveMestra;
     }
 
-
     /**
-     * Verifica qual a forma que será aberto a porta, utilizando a chave mestra ou não.
-     * Gera aleatóriamente a condição de "emperrada" ou "funcionando corretamente"
+     * Verifica qual a forma que será aberto a porta, utilizando a chave mestra ou
+     * não. Gera aleatóriamente a condição de "emperrada" ou "funcionando
+     * corretamente"
+     * 
      * @param proximoAmbiente
      */
     private void abrirPorta(Ambiente proximoAmbiente) {
         int perguntaChaveMestra = JOptionPane.NO_OPTION;
-        if(new Random().nextBoolean()){
-            if (nTentativasChaveMestra > 0)
-                perguntaChaveMestra = JOptionPane.showConfirmDialog(telaPrincipal.getJanela(), "Você possui a chave mestra, deseja utiliza-la?");
+        if (nTentativas == 0 && nTentativasChaveMestra > 0) {
+            perguntaChaveMestra = JOptionPane.YES_OPTION;
             ambienteAtual = proximoAmbiente;
-        }else{
+        } else if (new Random().nextBoolean()) {
+            if (nTentativasChaveMestra > 0)
+                perguntaChaveMestra = JOptionPane.showConfirmDialog(telaPrincipal.getJanela(),
+                        "Você possui a chave mestra, deseja utiliza-la?");
+            ambienteAtual = proximoAmbiente;
+        } else {
             if (nTentativasChaveMestra > 0) {
                 perguntaChaveMestra = JOptionPane.showConfirmDialog(telaPrincipal.getJanela(),
                         "A porta está emperrada!\nDeseja utilizar a chave mestra para desemperrar esta porta?");
@@ -383,7 +393,9 @@ class Jogo {
     }
 
     /**
-     * De acordo com o valor do parametro é feito o débito do saldo ou de tentativas ou da durabilidade da chave mestra
+     * De acordo com o valor do parametro é feito o débito do saldo ou de tentativas
+     * ou da durabilidade da chave mestra
+     * 
      * @param perguntaChaveMestra
      */
     private void debitaSaldoTentativas(int perguntaChaveMestra) {
@@ -428,7 +440,7 @@ class Jogo {
      * Verifica se é a ultima tentativa do saldo de tentativas
      */
     private void verificaEhUltimaTentaiva() {
-        if (nTentativas == 0 && temCargaExplosiva) {
+        if (nTentativas == 0 && nTentativasChaveMestra == 0 && temCargaExplosiva) {
             telaPrincipal.adicionaTextoConsole("Seu número de tentativas acabou."
                     + " Agora você pode apenas mandar explodir para tentar encontrar o tesouro.\n");
         }

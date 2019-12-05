@@ -15,8 +15,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /**
- * A classe "TelaPrincipal" é responsável por gerar a interface gráfica principal com todos os
- * componentes necessários
+ * A classe "TelaPrincipal" é responsável por gerar a interface gráfica
+ * principal com todos os componentes necessários
  */
 class TelaPrincipal {
     private Jogo jogo;
@@ -53,8 +53,8 @@ class TelaPrincipal {
     }
 
     /**
-     * Função monta a janela, configura as opções dos componentes
-     * e adiciona os campos, imagem, paineis na janela(JFrame)
+     * Função monta a janela, configura as opções dos componentes e adiciona os
+     * campos, imagem, paineis na janela(JFrame)
      */
     private void montarJanela() {
         janela.setSize(1050, 620);
@@ -92,17 +92,20 @@ class TelaPrincipal {
     public void atualizaTentativas(Integer nTentativas, Integer nTentativasMestra) {
         painelEsquerda.removeAll();
         painelEsquerda.setLayout(new BoxLayout(painelEsquerda, BoxLayout.Y_AXIS));
-        System.out.println(nTentativas);
-        System.out.println(nTentativasMestra);
-        painelEsquerda.add(new JLabel("<html>Número de<br> tentativas restantes:<br></html>")).setFont(new Font("SansSerif", Font.BOLD, 16));
-        painelEsquerda.add(new JLabel(nTentativas.toString())).setFont(new Font("SansSerif", Font.PLAIN, 15));
-        painelEsquerda.add(new JLabel("<html><br>Durabilidade da<br> chave mestra:<br></html>")).setFont(new Font("SansSerif", Font.BOLD, 16));
-        painelEsquerda.add(new JLabel(nTentativasMestra.toString())).setFont(new Font("SansSerif", Font.PLAIN, 15));
+        String strNTentativas = (nTentativas < 10 ? "0" : "") + nTentativas.toString();
+        String strNTentativasMestra = (nTentativasMestra < 10 ? "0" : "") + nTentativasMestra.toString();
+        painelEsquerda.add(new JLabel("<html>Número de<br> tentativas restantes:<br></html>"))
+                .setFont(new Font("SansSerif", Font.BOLD, 16));
+        painelEsquerda.add(new JLabel(strNTentativas)).setFont(new Font("SansSerif", Font.PLAIN, 15));
+        painelEsquerda.add(new JLabel("<html><br>Durabilidade da<br> chave mestra:<br></html>"))
+                .setFont(new Font("SansSerif", Font.BOLD, 16));
+        painelEsquerda.add(new JLabel(strNTentativasMestra)).setFont(new Font("SansSerif", Font.PLAIN, 15));
     }
 
     /**
-     * Configura a janela para terminar a execução do programa quando fecha a janela,
-     * iniciar centralizada, não permitir alterar seu tamanho padrão e por fim a deixa visível
+     * Configura a janela para terminar a execução do programa quando fecha a
+     * janela, iniciar centralizada, não permitir alterar seu tamanho padrão e por
+     * fim a deixa visível
      */
     void exibir() {
         janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -135,15 +138,17 @@ class TelaPrincipal {
         rolarFinal();
     }
 
-    public void warning(String texto){
+    public void warning(String texto) {
         Toolkit.getDefaultToolkit().beep();
-        JOptionPane optionPane = new JOptionPane(texto,JOptionPane.WARNING_MESSAGE);
+        JOptionPane optionPane = new JOptionPane(texto, JOptionPane.WARNING_MESSAGE);
         JDialog dialog = optionPane.createDialog("Warning!");
         dialog.setAlwaysOnTop(true);
         dialog.setVisible(true);
     }
+
     /**
-     * Adiciona no console um texto que é informado por parâmetro e também uma quebra de linha
+     * Adiciona no console um texto que é informado por parâmetro e também uma
+     * quebra de linha
      *
      * @param texto
      */
@@ -162,10 +167,9 @@ class TelaPrincipal {
         janela.revalidate();
     }
 
-
     /**
-     * Substitui a imagem da janela por outra com um tesouro, para simbolizar
-     * que ele foi encontrado
+     * Substitui a imagem da janela por outra com um tesouro, para simbolizar que
+     * ele foi encontrado
      */
     public void addImagemTesouro() {
         janela.remove(imagem);
@@ -183,6 +187,6 @@ class TelaPrincipal {
     }
 
     public JFrame getJanela() {
-      return janela;
+        return janela;
     }
 }
