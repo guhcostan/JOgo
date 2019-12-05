@@ -1,18 +1,19 @@
+import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * Essa eh a classe principal da aplicacao "World of Zull". "World of Zuul" eh
+ * Essa é a classe principal da aplicação "World of Zull". "World of Zuul" é
  * um jogo de aventura muito simples, baseado em texto. Usuarios podem caminhar
- * em um cenario. E eh tudo! Ele realmente precisa ser estendido para fazer algo
+ * em um cenario. E é tudo! Ele realmente precisa ser estendido para fazer algo
  * interessante!
  * <p>
  * Para jogar esse jogo, crie uma instancia dessa classe e chame o metodo
  * "jogar".
  * <p>
  * Essa classe principal cria e inicializa todas as outras: ela cria os
- * ambientes, cria o analisador e comeca o jogo. Ela tambeme avalia e executa os
+ * ambientes, cria o analisador e começa o jogo. Ela tambeme avalia e executa os
  * comandos que o analisador retorna.
  *
  * @author Michael Kölling and David J. Barnes (traduzido por Julio Cesar Alves)
@@ -31,7 +32,8 @@ class Jogo {
     private boolean temCargaExplosiva;
 
     /**
-     * Cria o jogo e incializa seu mapa interno.
+     * Construtor padrão da classe Jogo. Cria Ambientes, gera um número aleatório de tentativas para o jogador,
+     * cria o tesouro e sorteia em que ambiente a chave mestra vai ser definida
      */
     Jogo() {
         BancoDeDados.iniciar();
@@ -58,7 +60,7 @@ class Jogo {
 	    }
 	    gerarDicasParaAmbientes(ambienteTesouro);
 
-        System.out.println(ambienteTesouro.getNome());
+        //System.out.println(ambienteTesouro.getNome());
     }
 
     /**
@@ -109,7 +111,7 @@ class Jogo {
         Ambiente ambienteChaveMestra = ambientes[new Random().nextInt(ambientes.length)];
         ambienteChaveMestra.setChaveMestra(new Random().nextInt(ambientes.length));
 
-        System.out.println(ambienteChaveMestra.getNome());
+        //System.out.println(ambienteChaveMestra.getNome());
     }
 
     /**
@@ -234,6 +236,10 @@ class Jogo {
         }
     }
 
+    /**
+     * Caso haja duas opções de direção a serem escoplidas é solicitado ao usuário que ele informe qual delas deseja seguir
+     * @param comando
+     */
     private void escolherOpcao(Comando comando) {
         Ambiente proximoAmbiente = null;
 
@@ -242,8 +248,8 @@ class Jogo {
                 Ambiente[] saidas = ambienteAtual.getSaida(direcaoEscolhida);
                 if (saidas.length >= Integer.parseInt(comando.getSegundaPalavra())) {
                     proximoAmbiente = saidas[Integer.parseInt(comando.getSegundaPalavra()) - 1];
-                    ambienteAtual = proximoAmbiente;
-                    debitaSaldoTentativas();
+
+                    abrirPorta(proximoAmbiente);
 
                     verificaEhUltimaTentaiva();
                 } else {
@@ -306,17 +312,7 @@ class Jogo {
                     } else if (saidas.length == 1) {
                         proximoAmbiente = saidas[0];
 
-                        if (nTentativasChaveMestra > 0) {
-                            ambienteAtual = proximoAmbiente;
-                        }else{
-                            if(new Random().nextBoolean()){
-                                ambienteAtual = proximoAmbiente;
-                            }else{
-                                telaPrincipal.warning("A porta estava trancada, tente novamente ou utilize uma chave mestra\n");
-                            }
-                        }
-
-                        debitaSaldoTentativas();
+                        abrirPorta(proximoAmbiente);
 
                         ImprimirLocalizacaoAtual();
 
@@ -344,24 +340,63 @@ class Jogo {
         }
     }
 
+    /**
+     * Retorna o número de tentativas que ainda existem
+     * @return nTentativas
+     */
     public int getNTentativas() {
         return nTentativas;
     }
 
+    /**
+     * Retorna o número de durabilidade da chave mestra
+     * @return nTentativas
+     */
     public int getNTentativasChaveMestra() {
         return nTentativasChaveMestra;
     }
 
-    private void debitaSaldoTentativas() {
-        if (nTentativasChaveMestra != 0) {
+
+    /**
+     * Verifica qual a forma que será aberto a porta, utilizando a chave mestra ou não.
+     * Gera aleatóriamente a condição de "emperrada" ou "funcionando corretamente"
+     * @param proximoAmbiente
+     */
+    private void abrirPorta(Ambiente proximoAmbiente) {
+        int perguntaChaveMestra = JOptionPane.NO_OPTION;
+        if(new Random().nextBoolean()){
+            if (nTentativasChaveMestra > 0)
+                perguntaChaveMestra = JOptionPane.showConfirmDialog(telaPrincipal.getJanela(), "Você possui chave mestra, deseja utiliza-la?");
+            ambienteAtual = proximoAmbiente;
+        }else{
+            telaPrincipal.warning("A porta está emperrada, tente novamente ou utilize uma chave mestra\n");
+            if (nTentativasChaveMestra > 0) {
+                perguntaChaveMestra = JOptionPane.showConfirmDialog(telaPrincipal.getJanela(),
+                        "Você ainda possúe chave mestra, deseja utiliza-la para desemperrar esta porta?");
+                if (perguntaChaveMestra == JOptionPane.YES_OPTION)
+                    ambienteAtual = proximoAmbiente;
+            }
+        }
+        debitaSaldoTentativas(perguntaChaveMestra);
+    }
+
+    /**
+     * De acordo com o valor do parametro é feito o débito do saldo ou de tentativas ou da durabilidade da chave mestra
+     * @param perguntaChaveMestra
+     */
+    private void debitaSaldoTentativas(int perguntaChaveMestra) {
+        if (perguntaChaveMestra == JOptionPane.YES_OPTION) {
             nTentativasChaveMestra = this.nTentativasChaveMestra - 1;
-        } else if (nTentativas > 0) {
+        } else if (perguntaChaveMestra == JOptionPane.NO_OPTION) {
             nTentativas = this.nTentativas - 1;
         }
 
         telaPrincipal.atualizaTentativas(nTentativas, nTentativasChaveMestra);
     }
 
+    /**
+     * Executa a explosão da bomba caso o usuário dê o comando.
+     */
     private void explodir() {
         if (temCargaExplosiva) {
             telaPrincipal.adicionaTextoConsole("BOOOOM!");
@@ -380,10 +415,16 @@ class Jogo {
         fimDeJogo();
     }
 
+    /**
+     * Finaliza a execução do Jogo
+     */
     private void fimDeJogo() {
         telaPrincipal.travarInput();
     }
 
+    /**
+     * Verifica se é a ultima tentativa do saldo de tentativas
+     */
     private void verificaEhUltimaTentaiva() {
         if (nTentativas == 0 && temCargaExplosiva) {
             telaPrincipal.adicionaTextoConsole("Seu número de tentativas acabou."

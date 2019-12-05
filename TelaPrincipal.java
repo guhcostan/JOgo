@@ -161,4 +161,6 @@ class TelaPrincipal {
     public JTextField getInput() {
         return input;
     }
+
+    public JFrame getJanela(){return janela;}
 }
