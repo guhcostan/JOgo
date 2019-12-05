@@ -9,8 +9,7 @@ import java.util.Random;
  * em um cenario. E é tudo! Ele realmente precisa ser estendido para fazer algo
  * interessante!
  * <p>
- * Para jogar esse jogo, crie uma instancia dessa classe e chame o metodo
- * "jogar".
+ * Para jogar esse jogo, crie uma instancia dessa classe e chame o metodo "jogar".
  * <p>
  * Essa classe principal cria e inicializa todas as outras: ela cria os
  * ambientes, cria o analisador e começa o jogo. Ela tambeme avalia e executa os
@@ -431,4 +430,3 @@ class Jogo {
                     + " Agora você pode apenas mandar explodir para tentar encontrar o tesouro.\n");
         }
     }
-}

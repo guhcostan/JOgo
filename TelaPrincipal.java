@@ -1,11 +1,22 @@
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.BoxLayout;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 /**
- * A classe "TelaPrincipal" é responsável por gerar a interface gráfica
- * principal com todos os componentes necessários
+ * A classe "TelaPrincipal" é responsável por gerar a interface gráfica principal com todos os
+ * componentes necessários
  */
 class TelaPrincipal {
     private Jogo jogo;
@@ -162,5 +173,7 @@ class TelaPrincipal {
         return input;
     }
 
-    public JFrame getJanela(){return janela;}
+    public JFrame getJanela() {
+      return janela;
+    }
 }
