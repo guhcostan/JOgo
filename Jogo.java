@@ -89,9 +89,8 @@ class Jogo {
     }
 
     private void criarNTentativas() {
-        // nTentativas = new Random().nextInt(30) + 20;
-        nTentativas = 1;
-        nTentativasChaveMestra = 10;
+        nTentativas = new Random().nextInt(30) + 20;
+        nTentativasChaveMestra = 0;
     }
 
     private void criarTesouro() {
