@@ -1,471 +1,432 @@
+import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * Essa eh a classe principal da aplicacao "World of Zull". "World of Zuul" eh um jogo de aventura
- * muito simples, baseado em texto. Usuarios podem caminhar em um cenario. E eh tudo! Ele realmente
- * precisa ser estendido para fazer algo interessante!
+ * Essa é a classe principal da aplicação "World of Zull". "World of Zuul" é
+ * um jogo de aventura muito simples, baseado em texto. Usuarios podem caminhar
+ * em um cenario. E é tudo! Ele realmente precisa ser estendido para fazer algo
+ * interessante!
  * <p>
  * Para jogar esse jogo, crie uma instancia dessa classe e chame o metodo "jogar".
  * <p>
- * Essa classe principal cria e inicializa todas as outras: ela cria os ambientes, cria o analisador
- * e comeca o jogo. Ela tambeme avalia e executa os comandos que o analisador retorna.
+ * Essa classe principal cria e inicializa todas as outras: ela cria os
+ * ambientes, cria o analisador e começa o jogo. Ela tambeme avalia e executa os
+ * comandos que o analisador retorna.
  *
  * @author Michael Kölling and David J. Barnes (traduzido por Julio Cesar Alves)
  * @version 2011.07.31 (2016.02.01)
  */
 
 class Jogo {
+    private Analisador analisador;
+    private Ambiente ambienteAtual;
+    private String direcaoEscolhida;
+    private Ambiente[] ambientes;
+    private ArrayList<String> dicasEncontradas = new ArrayList<>();
+    private int nTentativas;
+    private int nTentativasChaveMestra;
+    private TelaPrincipal telaPrincipal;
+    private boolean temCargaExplosiva;
 
-	/**
-	 * Analisador dos comando do jogo
-	 */
-	private Analisador analisador;
+    /**
+     * Construtor padrão da classe Jogo. Cria Ambientes, gera um número aleatório de tentativas para o jogador,
+     * cria o tesouro e sorteia em que ambiente a chave mestra vai ser definida
+     */
+    Jogo() {
+        BancoDeDados.iniciar();
+        criarAmbientes();
+        criarNTentativas();
+        criarTesouro();
+        sortearChaveMestra();
+    }
 
-	/**
-	 * Ambiente que o jogador se encontra
-	 */
-	private Ambiente ambienteAtual;
-	/**
-	 * Direção para o jogador deseja ir
-	 */
-	private String direcaoEscolhida;
-	/**
-	 * Ambientes que o jogo possui
-	 */
-	private Ambiente[] ambientes;
+    private void criarNTentativas() {
+        nTentativas = new Random().nextInt(30) + 20;
+        nTentativasChaveMestra = 0;
+    }
 
-	/**
-	 * Dicas encontradas pelo jogador
-	 */
-	private ArrayList<String> dicasEncontradas = new ArrayList<>();
-	/**
-	 * Número de tentativas que o jogador possui
-	 */
-	private int nTentativas;
+    private void criarTesouro() {
+        temCargaExplosiva = true;
 
-	/**
-	 * Numero de tentativas que o jogador possui graças a chave mestra
-	 */
-	private int nTentativasChaveMestra;
-	/**
-	 * Referencia a interface grafica
-	 */
-	private TelaPrincipal telaPrincipal;
-	/**
-	 * Se o jogador possui a bomba
-	 */
-	private boolean temCargaExplosiva;
+        Ambiente ambienteTesouro = ambientes[new Random().nextInt(ambientes.length)];
+        ambienteTesouro.setTemTesouro();
+	    try {
+		    BancoDeDados.gravar("O ambiente do tesouro é: " + ambienteTesouro.getNome());
+	    } catch (IOException e) {
+		    telaPrincipal.warning("Erro ao gravar dicas no banco de dados");
+	    }
+	    gerarDicasParaAmbientes(ambienteTesouro);
 
-	/**
-	 * Cria o jogo e incializa seu mapa interno, dicas, tesouros, chave mestra e as tentativas.
-	 */
-	Jogo() {
-		BancoDeDados.iniciar();
-		criarAmbientes();
-		criarNTentativas();
-		criarTesouro();
-		sortearChaveMestra();
-	}
+        //System.out.println(ambienteTesouro.getNome());
+    }
 
-	/**
-	 * Sorteia numero de tentativas do jogador
-	 */
-	private void criarNTentativas() {
-		nTentativas = new Random().nextInt(30) + 20;
-		nTentativasChaveMestra = 0;
-	}
+    /**
+     * Gera três dicas com o texto "O tesouro não está no(a) X" e uma dica com o
+     * texto "O tesouro está próximo ao(à) Y”
+     */
+    private void gerarDicasParaAmbientes(Ambiente ambienteTesouro) {
 
-	/**
-	 * Sorteia localização do tesouro
-	 */
-	private void criarTesouro() {
-		temCargaExplosiva = true;
+        ArrayList<Ambiente> vizinhos;
+        Ambiente vizinhoDoTesouro;
+        Ambiente randomAmbienteDicaUm;
+        Ambiente randomAmbienteDicaDois;
+        Ambiente randomAmbiente;
 
-		Ambiente ambienteTesouro = ambientes[new Random().nextInt(ambientes.length)];
-		ambienteTesouro.setTemTesouro();
-		try {
-			BancoDeDados.gravar("O ambiente do tesouro é: " + ambienteTesouro.getNome());
-		} catch (IOException e) {
-			telaPrincipal.warning("Erro ao gravar dicas no banco de dados");
-		}
-		gerarDicasParaAmbientes(ambienteTesouro);
+        int contraNumeroDeDicasGeradas = 0;
+        while (contraNumeroDeDicasGeradas < 3) {
 
-		System.out.println(ambienteTesouro.getNome());
-	}
+            randomAmbienteDicaUm = ambientes[new Random().nextInt(ambientes.length)];
+            randomAmbiente = ambientes[new Random().nextInt(ambientes.length)];
 
-	/**
-	 * Gera três dicas com o texto "O tesouro não está no(a) X" e uma dica com o texto "O tesouro
-	 * está próximo ao(à) Y”
-	 */
-	private void gerarDicasParaAmbientes(Ambiente ambienteTesouro) {
+            if (randomAmbienteDicaUm.getDica().equals("") && randomAmbiente.getTemTesouro() == false) {
+                String dica = "<html><br> O tesouro não está <br> no(a) " + randomAmbiente.getNome() + "</html>";
+	            try {
+		            BancoDeDados.gravar("Dica " + contraNumeroDeDicasGeradas + "(" + randomAmbienteDicaUm.getNome() + "): " + dica);
+	            } catch (IOException e) {
+		            telaPrincipal.warning("Erro ao gravar dicas no banco de dados");
+	            }
+	            randomAmbienteDicaUm
+                        .setDica(dica);
+                contraNumeroDeDicasGeradas++;
+            }
+        }
 
-		ArrayList<Ambiente> vizinhos;
-		Ambiente vizinhoDoTesouro;
-		Ambiente randomAmbienteDicaUm;
-		Ambiente randomAmbienteDicaDois;
-		Ambiente randomAmbiente;
+        vizinhos = ambienteTesouro.getVizinho();
+        vizinhoDoTesouro = vizinhos.get(new Random().nextInt(vizinhos.size()));
+        randomAmbienteDicaDois = ambientes[new Random().nextInt(ambientes.length)];
+        String dicaVizinha = "<html><br> O tesouro está <br> próximo ao(à) " + vizinhoDoTesouro.getNome() + "</html>";
+	    try {
+		    BancoDeDados.gravar("Dica vizinha(" + randomAmbienteDicaDois.getNome() + "):" + dicaVizinha);
+	    } catch (IOException e) {
+		    telaPrincipal.warning("Erro ao gravar dicas no banco de dados");
+	    }
+	    randomAmbienteDicaDois
+                .setDica(dicaVizinha);
+    }
 
-		int contraNumeroDeDicasGeradas = 0;
-		while (contraNumeroDeDicasGeradas < 3) {
+    private void sortearChaveMestra() {
+        Ambiente ambienteChaveMestra = ambientes[new Random().nextInt(ambientes.length)];
+        ambienteChaveMestra.setChaveMestra(new Random().nextInt(ambientes.length));
 
-			randomAmbienteDicaUm = ambientes[new Random().nextInt(ambientes.length)];
-			randomAmbiente = ambientes[new Random().nextInt(ambientes.length)];
+        //System.out.println(ambienteChaveMestra.getNome());
+    }
 
-			if (randomAmbienteDicaUm.getDica().equals("")
-				&& randomAmbiente.getTemTesouro() == false) {
-				String dica = "<html><br> O tesouro não está <br> no(a) " + randomAmbiente.getNome()
-					+ "</html>";
-				try {
-					BancoDeDados.gravar(
-						"Dica " + contraNumeroDeDicasGeradas + "(" + randomAmbienteDicaUm.getNome()
-							+ "): " + dica);
-				} catch (IOException e) {
-					telaPrincipal.warning("Erro ao gravar dicas no banco de dados");
-				}
-				randomAmbienteDicaUm
-					.setDica(dica);
-				contraNumeroDeDicasGeradas++;
-			}
-		}
+    /**
+     * Cria todos os ambientes e liga as saidas deles
+     */
+    private void criarAmbientes() {
+        Ambiente escritorio, salaTv, cozinha, salaJantar, jardim, quarto1, quarto2, quarto3, quarto4, banheiro1,
+                banheiro2, corredor;
 
-		vizinhos = ambienteTesouro.getVizinho();
-		vizinhoDoTesouro = vizinhos.get(new Random().nextInt(vizinhos.size()));
-		randomAmbienteDicaDois = ambientes[new Random().nextInt(ambientes.length)];
-		String dicaVizinha =
-			"<html><br> O tesouro está <br> próximo ao(à) " + vizinhoDoTesouro.getNome()
-				+ "</html>";
-		try {
-			BancoDeDados
-				.gravar("Dica vizinha(" + randomAmbienteDicaDois.getNome() + "):" + dicaVizinha);
-		} catch (IOException e) {
-			telaPrincipal.warning("Erro ao gravar dicas no banco de dados");
-		}
-		randomAmbienteDicaDois
-			.setDica(dicaVizinha);
-	}
+        // cria os ambientes
+        escritorio = new Ambiente("escritorio");
+        salaTv = new Ambiente("sala de tv");
+        cozinha = new Ambiente("cozinha");
+        salaJantar = new Ambiente("sala de jantar");
+        jardim = new Ambiente("jardim");
+        quarto1 = new Ambiente("quarto 1");
+        quarto2 = new Ambiente("quarto 2");
+        quarto3 = new Ambiente("quarto 3");
+        quarto4 = new Ambiente("quarto 4");
+        banheiro1 = new Ambiente("banheiro 1");
+        banheiro2 = new Ambiente("banheiro 2");
+        corredor = new Ambiente("corredor");
 
-	/**
-	 * Sorteia onde se encontra a chave mestra
-	 */
-	private void sortearChaveMestra() {
-		Ambiente ambienteChaveMestra = ambientes[new Random().nextInt(ambientes.length)];
-		ambienteChaveMestra.setChaveMestra(new Random().nextInt(ambientes.length));
+        // inicializa as saidas dos ambientes
+        escritorio.ajustarSaidas(null, null, new Ambiente[] { salaTv }, null);
+        salaTv.ajustarSaidas(new Ambiente[] { escritorio }, new Ambiente[] { salaJantar }, new Ambiente[] { jardim },
+                null);
+        jardim.ajustarSaidas(new Ambiente[] { salaTv, cozinha }, null, null, null);
+        cozinha.ajustarSaidas(new Ambiente[] { salaJantar }, null, new Ambiente[] { jardim }, null);
+        salaJantar.ajustarSaidas(null, new Ambiente[] { corredor }, new Ambiente[] { cozinha },
+                new Ambiente[] { salaTv });
+        corredor.ajustarSaidas(new Ambiente[] { quarto1, quarto2 }, new Ambiente[] { quarto3 },
+                new Ambiente[] { banheiro1, quarto4 }, new Ambiente[] { salaJantar });
+        quarto1.ajustarSaidas(null, null, new Ambiente[] { corredor }, null);
+        quarto2.ajustarSaidas(null, null, new Ambiente[] { corredor }, null);
+        quarto3.ajustarSaidas(null, null, new Ambiente[] { banheiro2 }, new Ambiente[] { corredor });
+        quarto4.ajustarSaidas(new Ambiente[] { corredor }, null, null, null);
+        banheiro1.ajustarSaidas(new Ambiente[] { corredor }, null, null, null);
+        banheiro2.ajustarSaidas(new Ambiente[] { quarto3 }, null, null, null);
 
-		System.out.println(ambienteChaveMestra.getNome());
-	}
+        ambienteAtual = salaTv; // o jogo comeca do lado de fora
+        ambientes = new Ambiente[] { escritorio, salaTv, cozinha, salaJantar, jardim, quarto1, quarto2, quarto3,
+                quarto4, banheiro1, banheiro2, corredor };
 
-	/**
-	 * Cria todos os ambientes e liga as saidas deles
-	 */
-	private void criarAmbientes() {
-		Ambiente escritorio, salaTv, cozinha, salaJantar, jardim, quarto1, quarto2, quarto3, quarto4, banheiro1,
-			banheiro2, corredor;
+    }
 
-		// cria os ambientes
-		escritorio = new Ambiente("escritorio");
-		salaTv = new Ambiente("sala de tv");
-		cozinha = new Ambiente("cozinha");
-		salaJantar = new Ambiente("sala de jantar");
-		jardim = new Ambiente("jardim");
-		quarto1 = new Ambiente("quarto 1");
-		quarto2 = new Ambiente("quarto 2");
-		quarto3 = new Ambiente("quarto 3");
-		quarto4 = new Ambiente("quarto 4");
-		banheiro1 = new Ambiente("banheiro 1");
-		banheiro2 = new Ambiente("banheiro 2");
-		corredor = new Ambiente("corredor");
+    /**
+     * Rotina principal do jogo. Fica em loop ate terminar o jogo.
+     */
+    void jogar() {
+        telaPrincipal = new TelaPrincipal(this);
+        telaPrincipal.exibir();
 
-		// inicializa as saidas dos ambientes
-		escritorio.ajustarSaidas(null, null, new Ambiente[]{salaTv}, null);
-		salaTv.ajustarSaidas(new Ambiente[]{escritorio}, new Ambiente[]{salaJantar},
-			new Ambiente[]{jardim},
-			null);
-		jardim.ajustarSaidas(new Ambiente[]{salaTv, cozinha}, null, null, null);
-		cozinha.ajustarSaidas(new Ambiente[]{salaJantar}, null, new Ambiente[]{jardim}, null);
-		salaJantar.ajustarSaidas(null, new Ambiente[]{corredor}, new Ambiente[]{cozinha},
-			new Ambiente[]{salaTv});
-		corredor.ajustarSaidas(new Ambiente[]{quarto1, quarto2}, new Ambiente[]{quarto3},
-			new Ambiente[]{banheiro1, quarto4}, new Ambiente[]{salaJantar});
-		quarto1.ajustarSaidas(null, null, new Ambiente[]{corredor}, null);
-		quarto2.ajustarSaidas(null, null, new Ambiente[]{corredor}, null);
-		quarto3.ajustarSaidas(null, null, new Ambiente[]{banheiro2}, new Ambiente[]{corredor});
-		quarto4.ajustarSaidas(new Ambiente[]{corredor}, null, null, null);
-		banheiro1.ajustarSaidas(new Ambiente[]{corredor}, null, null, null);
-		banheiro2.ajustarSaidas(new Ambiente[]{quarto3}, null, null, null);
+        analisador = new Analisador(telaPrincipal.getInput());
+        imprimirBoasVindas();
+    }
 
-		ambienteAtual = salaTv; // o jogo comeca do lado de fora
-		ambientes = new Ambiente[]{escritorio, salaTv, cozinha, salaJantar, jardim, quarto1,
-			quarto2, quarto3,
-			quarto4, banheiro1, banheiro2, corredor};
+    /**
+     * Imprime a mensagem de abertura para o jogador.
+     */
+    private void imprimirBoasVindas() {
+        telaPrincipal.adicionaTextoConsole("Bem-vindo ao World of Zuul!");
+        telaPrincipal.adicionaTextoConsole("World of Zuul eh um novo jogo de aventura, incrivelmente chato.");
+        telaPrincipal.adicionaTextoConsole("Digite 'ajuda' se voce precisar de ajuda.");
+        telaPrincipal.adicionaTextoConsole("");
 
-	}
+        ImprimirLocalizacaoAtual();
+    }
 
-	/**
-	 * Rotina principal do jogo. Fica em loop ate terminar o jogo.
-	 */
-	void jogar() {
-		telaPrincipal = new TelaPrincipal(this);
-		telaPrincipal.exibir();
+    /**
+     * Função imprime na tela a localização atual do jogador
+     */
+    private void ImprimirLocalizacaoAtual() {
+        telaPrincipal.adicionaTextoConsole(">Voce esta na " + ambienteAtual.getNome() + " da casa mal assombrada.");
 
-		analisador = new Analisador(telaPrincipal.getInput());
-		imprimirBoasVindas();
-	}
+        telaPrincipal.adicionaTextoConsole("Saidas: ");
+        telaPrincipal.adicionaTextoConsole(ambienteAtual.getTodasSaidas());
 
-	/**
-	 * Imprime a mensagem de abertura para o jogador.
-	 */
-	private void imprimirBoasVindas() {
-		telaPrincipal.adicionaTextoConsole("Bem-vindo ao World of Zuul!");
-		telaPrincipal.adicionaTextoConsole(
-			"World of Zuul eh um novo jogo de aventura, incrivelmente chato.");
-		telaPrincipal.adicionaTextoConsole("Digite 'ajuda' se voce precisar de ajuda.");
-		telaPrincipal.adicionaTextoConsole("");
+        if(!dicasEncontradas.contains(ambienteAtual.getDica())){
+            dicasEncontradas.add(ambienteAtual.getDica());
+            telaPrincipal.atualizaDicas(ambienteAtual.getDica());
+        }
+        if (ambienteAtual.getChaveMestra() != 0) {
+            telaPrincipal.adicionaTextoConsole("Você encontrou a chave mestra.");
+            telaPrincipal.adicionaTextoConsole("Agora você pode entrar em lugares onde a porta está emperrada.\n");
+            nTentativasChaveMestra = ambienteAtual.getChaveMestra();
+            ambienteAtual.setChaveMestra(0);
+        }
+        telaPrincipal.atualizaTentativas(nTentativas, nTentativasChaveMestra);
+    }
 
-		ImprimirLocalizacaoAtual();
-	}
+    /**
+     * Dado um comando, processa-o (ou seja, executa-o)
+     */
+    void processarComando() {
+        Comando comando = analisador.pegarComando();
 
-	/**
-	 * Função imprime na tela a localização atual do jogador
-	 */
-	private void ImprimirLocalizacaoAtual() {
-		telaPrincipal.adicionaTextoConsole(
-			">Voce esta na " + ambienteAtual.getNome() + " da casa mal assombrada.");
+        if (comando.ehDesconhecido()) {
+            telaPrincipal.adicionaTextoConsole("Eu nao entendi o que voce disse...\n");
+        } else {
+            String palavraDeComando = comando.getPalavraDeComando();
+            switch (palavraDeComando) {
+            case "ajuda":
+                imprimirAjuda();
+                break;
+            case "ir":
+                irParaAmbiente(comando);
+                break;
+            case "opcao":
+                escolherOpcao(comando);
+                break;
+            case "sair":
+                sair(comando);
+                break;
+            case "observar":
+                ImprimirLocalizacaoAtual();
+                break;
+            case "explodir":
+                explodir();
+                break;
+            }
+        }
+    }
 
-		telaPrincipal.adicionaTextoConsole("Saidas: ");
-		telaPrincipal.adicionaTextoConsole(ambienteAtual.getTodasSaidas());
+    /**
+     * Caso haja duas opções de direção a serem escoplidas é solicitado ao usuário que ele informe qual delas deseja seguir
+     * @param comando
+     */
+    private void escolherOpcao(Comando comando) {
+        Ambiente proximoAmbiente = null;
 
-		if (!dicasEncontradas.contains(ambienteAtual.getDica())) {
-			dicasEncontradas.add(ambienteAtual.getDica());
-			telaPrincipal.atualizaDicas(ambienteAtual.getDica());
-		}
-		if (ambienteAtual.getChaveMestra() != 0) {
-			telaPrincipal.adicionaTextoConsole("Você encontrou a chave mestra.");
-			telaPrincipal.adicionaTextoConsole(
-				"Agora você pode entrar em lugares onde a porta está emperrada.\n");
-			nTentativasChaveMestra = ambienteAtual.getChaveMestra();
-			ambienteAtual.setChaveMestra(0);
-		}
-		telaPrincipal.atualizaTentativas(nTentativas, nTentativasChaveMestra);
-	}
+        if (direcaoEscolhida != null) {
+            try {
+                Ambiente[] saidas = ambienteAtual.getSaida(direcaoEscolhida);
+                if (saidas.length >= Integer.parseInt(comando.getSegundaPalavra())) {
+                    proximoAmbiente = saidas[Integer.parseInt(comando.getSegundaPalavra()) - 1];
 
-	/**
-	 * Dado um comando, processa-o (ou seja, executa-o)
-	 */
-	void processarComando() {
-		Comando comando = analisador.pegarComando();
+                    abrirPorta(proximoAmbiente);
 
-		if (comando.ehDesconhecido()) {
-			telaPrincipal.adicionaTextoConsole("Eu nao entendi o que voce disse...\n");
-		} else {
-			String palavraDeComando = comando.getPalavraDeComando();
-			switch (palavraDeComando) {
-				case "ajuda":
-					imprimirAjuda();
-					break;
-				case "ir":
-					irParaAmbiente(comando);
-					break;
-				case "opcao":
-					escolherOpcao(comando);
-					break;
-				case "sair":
-					sair(comando);
-					break;
-				case "observar":
-					ImprimirLocalizacaoAtual();
-					break;
-				case "explodir":
-					explodir();
-					break;
-			}
-		}
-	}
+                    verificaEhUltimaTentaiva();
+                } else {
+                    telaPrincipal.adicionaTextoConsole("Opção invalida!\n");
+                }
 
-	/**
-	 * Caso o jogador vá para uma direção que possua diversos caminhos é nescessario que ele escolha
-	 * um destes caminhos
-	 *
-	 * @param comando para onde ele deseja ir
-	 */
-	private void escolherOpcao(Comando comando) {
-		Ambiente proximoAmbiente = null;
+                direcaoEscolhida = null;
+                ImprimirLocalizacaoAtual();
 
-		if (direcaoEscolhida != null) {
-			try {
-				Ambiente[] saidas = ambienteAtual.getSaida(direcaoEscolhida);
-				if (saidas.length >= Integer.parseInt(comando.getSegundaPalavra())) {
-					proximoAmbiente = saidas[Integer.parseInt(comando.getSegundaPalavra()) - 1];
-					ambienteAtual = proximoAmbiente;
-					debitaSaldoTentativas();
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        } else {
+            telaPrincipal.adicionaTextoConsole("Nenhuma direção foi escolhida!\n");
+        }
+    }
 
-					verificaEhUltimaTentaiva();
-				} else {
-					telaPrincipal.adicionaTextoConsole("Opção invalida!\n");
-				}
+    // Implementacoes dos comandos do usuario
 
-				direcaoEscolhida = null;
-				ImprimirLocalizacaoAtual();
+    /**
+     * Printe informacoes de ajuda. Aqui nos imprimimos algo bobo e enigmatico e a
+     * lista de palavras de comando
+     */
+    private void imprimirAjuda() {
+        telaPrincipal.adicionaTextoConsole("Voce esta perdido. Voce esta sozinho. Voce caminha");
+        telaPrincipal.adicionaTextoConsole("pela universidade.");
+        telaPrincipal.adicionaTextoConsole();
+        telaPrincipal.adicionaTextoConsole("Suas palavras de comando sao:");
+        for (String comando : PalavrasComando.comandosValidos) {
+            telaPrincipal.adicionaTextoConsole(comando + " ");
+        }
+        telaPrincipal.adicionaTextoConsole();
+    }
 
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			}
-		} else {
-			telaPrincipal.adicionaTextoConsole("Nenhuma direção foi escolhida!\n");
-		}
-	}
+    /**
+     * Tenta ir em uma direcao. Se existe uma saida entra no novo ambiente, caso
+     * contrario imprime mensagem de erro.
+     */
+    private void irParaAmbiente(Comando comando) {
+        if (nTentativas == 0) {
+            telaPrincipal.adicionaTextoConsole("Você não pode mais se mover! Seu número de tentativas acabou.\n");
+        } else if (!comando.temSegundaPalavra()) {
+            // se nao ha segunda palavra, nao sabemos pra onde ir...
+            telaPrincipal.adicionaTextoConsole("Ir pra onde?");
+        } else {
+            String direcao = comando.getSegundaPalavra();
 
-	// Implementacoes dos comandos do usuario
+            // Tenta sair do ambiente atual
+            Ambiente proximoAmbiente = null;
 
-	/**
-	 * Printe informacoes de ajuda. Aqui nos imprimimos algo bobo e enigmatico e a lista de palavras
-	 * de comando
-	 */
-	private void imprimirAjuda() {
-		telaPrincipal.adicionaTextoConsole("Voce esta perdido. Voce esta sozinho. Voce caminha");
-		telaPrincipal.adicionaTextoConsole("pela universidade.");
-		telaPrincipal.adicionaTextoConsole();
-		telaPrincipal.adicionaTextoConsole("Suas palavras de comando sao:");
-		for (String comando : PalavrasComando.comandosValidos) {
-			telaPrincipal.adicionaTextoConsole(comando + " ");
-		}
-		telaPrincipal.adicionaTextoConsole();
-	}
+            try {
+                Ambiente[] saidas = ambienteAtual.getSaida(direcao);
+                if (saidas != null) {
+                    if (saidas.length > 1) {
+                        telaPrincipal.adicionaTextoConsole(
+                                "Ha mais de uma porta, escolha uma, digite 'opcao' e o numero da opcao!");
+                        for (int x = 0; x < saidas.length; x++)
+                            telaPrincipal.adicionaTextoConsole((x + 1) + " - " + saidas[x].getNome());
+                        direcaoEscolhida = direcao;
+                    } else if (saidas.length == 1) {
+                        proximoAmbiente = saidas[0];
 
-	/**
-	 * Tenta ir em uma direcao. Se existe uma saida entra no novo ambiente, caso contrario imprime
-	 * mensagem de erro.
-	 */
-	private void irParaAmbiente(Comando comando) {
-		if (nTentativas == 0) {
-			telaPrincipal.adicionaTextoConsole(
-				"Você não pode mais se mover! Seu número de tentativas acabou.\n");
-		} else if (!comando.temSegundaPalavra()) {
-			// se nao ha segunda palavra, nao sabemos pra onde ir...
-			telaPrincipal.adicionaTextoConsole("Ir pra onde?");
-		} else {
-			String direcao = comando.getSegundaPalavra();
+                        abrirPorta(proximoAmbiente);
 
-			// Tenta sair do ambiente atual
-			Ambiente proximoAmbiente = null;
+                        ImprimirLocalizacaoAtual();
 
-			try {
-				Ambiente[] saidas = ambienteAtual.getSaida(direcao);
-				if (saidas != null) {
-					if (saidas.length > 1) {
-						telaPrincipal.adicionaTextoConsole(
-							"Ha mais de uma porta, escolha uma, digite 'opcao' e o numero da opcao!");
-                        for (int x = 0; x < saidas.length; x++) {
-                            telaPrincipal
-                                .adicionaTextoConsole((x + 1) + " - " + saidas[x].getNome());
-                        }
-						direcaoEscolhida = direcao;
-					} else if (saidas.length == 1) {
-						proximoAmbiente = saidas[0];
+                        verificaEhUltimaTentaiva();
+                    }
+                }
+            } catch (Exception e) {
+                telaPrincipal.adicionaTextoConsole("Opção invalida!\n");
+            }
+        }
 
-						if (nTentativasChaveMestra > 0) {
-							ambienteAtual = proximoAmbiente;
-						} else {
-							if (new Random().nextBoolean()) {
-								ambienteAtual = proximoAmbiente;
-							} else {
-								telaPrincipal.warning(
-									"A porta estava trancada, tente novamente ou utilize uma chave mestra\n");
-							}
-						}
+    }
 
-						debitaSaldoTentativas();
+    /**
+     * "Sair" foi digitado. Verifica o resto do comando pra ver se nos queremos
+     * realmente sair do jogo.
+     *
+     * @return true, se este comando sai do jogo, false, caso contrario
+     */
+    private void sair(Comando comando) {
+        if (comando.temSegundaPalavra()) {
+            telaPrincipal.adicionaTextoConsole("Sair o que?");
+        } else {
+            telaPrincipal.fechar();
+        }
+    }
 
-						ImprimirLocalizacaoAtual();
+    /**
+     * Retorna o número de tentativas que ainda existem
+     * @return nTentativas
+     */
+    public int getNTentativas() {
+        return nTentativas;
+    }
 
-						verificaEhUltimaTentaiva();
-					}
-				}
-			} catch (Exception e) {
-				telaPrincipal.adicionaTextoConsole("Opção invalida!\n");
-			}
-		}
+    /**
+     * Retorna o número de durabilidade da chave mestra
+     * @return nTentativas
+     */
+    public int getNTentativasChaveMestra() {
+        return nTentativasChaveMestra;
+    }
 
-	}
 
-	/**
-	 * "Sair" foi digitado. Verifica o resto do comando pra ver se nos queremos realmente sair do
-	 * jogo.
-	 *
-	 * @return true, se este comando sai do jogo, false, caso contrario
-	 */
-	private void sair(Comando comando) {
-		if (comando.temSegundaPalavra()) {
-			telaPrincipal.adicionaTextoConsole("Sair o que?");
-		} else {
-			telaPrincipal.fechar();
-		}
-	}
+    /**
+     * Verifica qual a forma que será aberto a porta, utilizando a chave mestra ou não.
+     * Gera aleatóriamente a condição de "emperrada" ou "funcionando corretamente"
+     * @param proximoAmbiente
+     */
+    private void abrirPorta(Ambiente proximoAmbiente) {
+        int perguntaChaveMestra = JOptionPane.NO_OPTION;
+        if(new Random().nextBoolean()){
+            if (nTentativasChaveMestra > 0)
+                perguntaChaveMestra = JOptionPane.showConfirmDialog(telaPrincipal.getJanela(), "Você possui chave mestra, deseja utiliza-la?");
+            ambienteAtual = proximoAmbiente;
+        }else{
+            telaPrincipal.warning("A porta está emperrada, tente novamente ou utilize uma chave mestra\n");
+            if (nTentativasChaveMestra > 0) {
+                perguntaChaveMestra = JOptionPane.showConfirmDialog(telaPrincipal.getJanela(),
+                        "Você ainda possúe chave mestra, deseja utiliza-la para desemperrar esta porta?");
+                if (perguntaChaveMestra == JOptionPane.YES_OPTION)
+                    ambienteAtual = proximoAmbiente;
+            }
+        }
+        debitaSaldoTentativas(perguntaChaveMestra);
+    }
 
-	/**
-	 * @return retorna o numero de tentativas que o jogador possui
-	 */
-	public int getNTentativas() {
-		return nTentativas;
-	}
+    /**
+     * De acordo com o valor do parametro é feito o débito do saldo ou de tentativas ou da durabilidade da chave mestra
+     * @param perguntaChaveMestra
+     */
+    private void debitaSaldoTentativas(int perguntaChaveMestra) {
+        if (perguntaChaveMestra == JOptionPane.YES_OPTION) {
+            nTentativasChaveMestra = this.nTentativasChaveMestra - 1;
+        } else if (perguntaChaveMestra == JOptionPane.NO_OPTION) {
+            nTentativas = this.nTentativas - 1;
+        }
 
-	/**
-	 * @return retorna o numero de tentativas com a chave mestra que o jogador possui
-	 */
-	public int getNTentativasChaveMestra() {
-		return nTentativasChaveMestra;
-	}
+        telaPrincipal.atualizaTentativas(nTentativas, nTentativasChaveMestra);
+    }
 
-	/**
-	 * Retira uma tentativa do jogador, sendo debitada da chave mestra ou das principais
-	 */
-	private void debitaSaldoTentativas() {
-		if (nTentativasChaveMestra != 0) {
-			nTentativasChaveMestra = this.nTentativasChaveMestra - 1;
-		} else if (nTentativas > 0) {
-			nTentativas = this.nTentativas - 1;
-		}
+    /**
+     * Executa a explosão da bomba caso o usuário dê o comando.
+     */
+    private void explodir() {
+        if (temCargaExplosiva) {
+            telaPrincipal.adicionaTextoConsole("BOOOOM!");
 
-		telaPrincipal.atualizaTentativas(nTentativas, nTentativasChaveMestra);
-	}
+            if (ambienteAtual.getTemTesouro()) {
+                telaPrincipal.addImagemTesouro();
+                telaPrincipal.adicionaTextoConsole("Parabéns! Você encontrou o tesouro.");
+            } else {
+                telaPrincipal.addImagemGameOver();
+                telaPrincipal.adicionaTextoConsole("Se F#de0!");
+                telaPrincipal.adicionaTextoConsole("Você usou sua única carga e não encontrou o tesoura.");
+            }
+        }
 
-	/**
-	 * Comando para checar se o jogador está no local da bomba e finalizar o jogo
-	 */
-	private void explodir() {
-		if (temCargaExplosiva) {
-			telaPrincipal.adicionaTextoConsole("BOOOOM!");
+        temCargaExplosiva = false;
+        fimDeJogo();
+    }
 
-			if (ambienteAtual.getTemTesouro()) {
-				telaPrincipal.addImagemTesouro();
-				telaPrincipal.adicionaTextoConsole("Parabéns! Você encontrou o tesouro.");
-			} else {
-				telaPrincipal.addImagemGameOver();
-				telaPrincipal.adicionaTextoConsole("Se F#de0!");
-				telaPrincipal
-					.adicionaTextoConsole("Você usou sua única carga e não encontrou o tesoura.");
-			}
-		}
+    /**
+     * Finaliza a execução do Jogo
+     */
+    private void fimDeJogo() {
+        telaPrincipal.travarInput();
+    }
 
-		temCargaExplosiva = false;
-		fimDeJogo();
-	}
-
-	/**
-	 * Encerra o programa
-	 */
-	private void fimDeJogo() {
-		telaPrincipal.travarInput();
-	}
-
-	/**
-	 * Verifica se o jogador ainda possui tentativas
-	 */
-	private void verificaEhUltimaTentaiva() {
-		if (nTentativas == 0 && temCargaExplosiva) {
-			telaPrincipal.adicionaTextoConsole("Seu número de tentativas acabou."
-				+ " Agora você pode apenas mandar explodir para tentar encontrar o tesouro.\n");
-		}
-	}
-}
+    /**
+     * Verifica se é a ultima tentativa do saldo de tentativas
+     */
+    private void verificaEhUltimaTentaiva() {
+        if (nTentativas == 0 && temCargaExplosiva) {
+            telaPrincipal.adicionaTextoConsole("Seu número de tentativas acabou."
+                    + " Agora você pode apenas mandar explodir para tentar encontrar o tesouro.\n");
+        }
+    }
